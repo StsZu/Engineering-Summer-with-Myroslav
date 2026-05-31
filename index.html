@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="uk" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Академія юного інженера Мирослава — Літо 2025</title>
+  <meta name="description" content="Літній план Мирослава: фізика, технології, робот, 3D-друк, море." />
+
+  <!-- =====================================================
+       ЗОВНІШНІ ЗАЛЕЖНОСТІ
+       ===================================================== -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <!-- =====================================================
+       TAILWIND КОНФІГУРАЦІЯ — КОЛЬОРИ ТА ШРИФТИ
+       ===================================================== -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+          colors: {
+            ink:    '#0f0f0f',
+            paper:  '#faf8f4',
+            cream:  '#f0ede6',
+            accent: '#d4562a',
+            teal:   '#1a7a6e',
+            gold:   '#c49a2e',
+            mist:   '#8a9ba8',
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.6s ease forwards',
+            'slide-in': 'slideIn 0.4s ease forwards',
+          },
+          keyframes: {
+            fadeUp: {
+              '0%':   { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            slideIn: {
+              '0%':   { opacity: '0', transform: 'translateX(-12px)' },
+              '100%': { opacity: '1', transform: 'translateX(0)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- =====================================================
+       ГЛОБАЛЬНІ СТИЛІ
+       ===================================================== -->
+  <style>
+    body { font-family: 'DM Sans', sans-serif; background: #faf8f4; color: #0f0f0f; }
+    h1, h2, h3, h4, h5 { font-family: 'Syne', sans-serif; }
+
+    /* Прокрутка-індикатор вгорі сторінки */
+    #scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: #d4562a; z-index: 9999; width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* Плавна поява секцій при скролі */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Активний пункт навігації */
+    nav a.active { color: #d4562a; }
+
+    /* Кастомний скролбар */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f0ede6; }
+    ::-webkit-scrollbar-thumb { background: #d4562a; border-radius: 3px; }
+
+    /* Чекбокс стиль */
+    .goal-check:checked + label { text-decoration: line-through; opacity: 0.5; }
+    .goal-check:checked ~ .check-icon { background: #1a7a6e; border-color: #1a7a6e; }
+    .goal-check:checked ~ .check-icon::after { content: '✓'; color: white; font-size: 11px; display: flex; align-items: center; justify-content: center; height: 100%; }
+
+    /* Hero grain overlay */
+    .grain::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+
+    /* Tabs активний */
+    .tab-btn.tab-active { background: #d4562a; color: white; }
+
+    /* Journal textarea */
+    .journal-area { resize: none; min-height: 72px; }
+
+    /* Month badge */
+    .month-jun { background: #dcfce7; color: #166534; }
+    .month-jul { background: #fef9c3; color: #854d0e; }
+    .month-aug { background: #fee2e2; color: #991b1b; }
+
+    /* Sticky header backdrop */
+    header { -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  </style>
+</head>
+
+<body class="bg-paper text-ink antialiased">
+
+  <!-- ПРОГРЕС-БАР СКРОЛУ -->
+  <div id="scroll-progress" role="progressbar" aria-label="Прогрес читання"></div>
+
+  <!-- =====================================================
+       HEADER — ФІКСОВАНА НАВІГАЦІЯ З BACKDROP-BLUR
+       ===================================================== -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-paper/80 border-b border-cream shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 md:h-16">
+
+        <!-- Логотип / назва -->
+        <a href="#hero" class="flex items-center gap-2 group" aria-label="На початок">
+          <span class="text-2xl select-none">🚀</span>
+          <span class="font-display font-700 text-sm md:text-base tracking-tight leading-tight">
+            Академія<br class="hidden sm:block" />
+            <span class="text-accent">Мирослава</span>
+          </span>
+        </a>
+
+        <!-- Навігація — desktop -->
+        <nav class="hidden md:flex items-center gap-6 text-sm font-medium" aria-label="Головне меню">
+          <a href="#about"    class="hover:text-accent transition-colors duration-200">Місія</a>
+          <a href="#months"   class="hover:text-accent transition-colors duration-200">Місяці</a>
+          <a href="#goals"    class="hover:text-accent transition-colors duration-200">Цілі</a>
+          <a href="#projects" class="hover:text-accent transition-colors duration-200">Проєкти</a>
+          <a href="#journal"  class="hover:text-accent transition-colors duration-200">Журнал</a>
+          <a href="#safety"   class="hover:text-accent transition-colors duration-200">Безпека</a>
+        </nav>
+
+        <!-- Кнопка прогресу та мобільне меню -->
+        <div class="flex items-center gap-3">
+          <!-- Лічильник виконаного -->
+          <div id="progress-badge" class="text-xs font-display font-600 bg-teal/10 text-teal px-3 py-1.5 rounded-full border border-teal/20">
+            <span id="done-count">0</span>/<span id="total-count">0</span> виконано
+          </div>
+
+          <!-- Гамбургер — mobile -->
+          <button id="menu-toggle" class="md:hidden p-2 rounded-lg hover:bg-cream transition-colors" aria-label="Відкрити меню" aria-expanded="false" aria-controls="mobile-menu">
+            <svg id="icon-hamburger" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg id="icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мобільне меню -->
+    <nav id="mobile-menu" class="hidden md:hidden border-t border-cream bg-paper/95 backdrop-blur-lg" aria-label="Мобільне меню">
+      <div class="px-4 py-3 flex flex-col gap-1">
+        <a href="#about"    class="mobile-link py-2.5 px-3 rounded-lg hover:bg-cream font-medium transition-colors">🎯 Місія</a>
+        <a href="#months"   class="mobile-link py-2.5 px-3 rounded-lg hover:bg-cream font-medium transition-colors">📅 Місяці</a>
+        <a href="#goals"    class="mobile-link py-2.5 px-3 rounded-lg hover:bg-cream font-medium transition-colors">✅ Цілі</a>
+        <a href="#projects" class="mobile-link py-2.5 px-3 rounded-lg hover:bg-cream font-medium transition-colors">🔧 Проєкти</a>
+        <a href="#journal"  class="mobile-link py-2.5 px-3 rounded-lg hover:bg-cream font-medium transition-colors">📓 Журнал</a>
+        <a href="#safety"   class="mobile-link py-2.5 px-3 rounded-lg hover:bg-cream font-medium transition-colors">🛡️ Безпека</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- =====================================================
+         HERO — ЗАГОЛОВНА СЕКЦІЯ
+         ===================================================== -->
+    <section id="hero" class="relative grain overflow-hidden min-h-screen flex items-center pt-16">
+
+      <!-- Фон з Unsplash -->
+      <div class="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400&q=80"
+          alt=""
+          role="presentation"
+          class="w-full h-full object-cover object-center opacity-10"
+          loading="eager"
+        />
+        <!-- Градієнт поверх фото -->
+        <div class="absolute inset-0 bg-gradient-to-br from-paper via-paper/95 to-cream/80"></div>
+      </div>
+
+      <!-- Декоративна сітка -->
+      <div class="absolute inset-0 z-0 opacity-[0.04]"
+           style="background-image: linear-gradient(#0f0f0f 1px, transparent 1px), linear-gradient(90deg, #0f0f0f 1px, transparent 1px); background-size: 48px 48px;">
+      </div>
+
+      <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+        <div class="max-w-3xl">
+
+          <!-- Мета-рядок -->
+          <div class="flex flex-wrap items-center gap-2 mb-6 animate-fade-up">
+            <span class="inline-flex items-center gap-1.5 text-xs font-600 uppercase tracking-widest text-accent border border-accent/30 bg-accent/5 px-3 py-1.5 rounded-full">
+              ☀️ Літо 2025
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-600 uppercase tracking-widest text-teal border border-teal/30 bg-teal/5 px-3 py-1.5 rounded-full">
+              🎂 8 років
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-600 uppercase tracking-widest text-mist border border-mist/30 bg-mist/5 px-3 py-1.5 rounded-full">
+              📅 Червень — Серпень
+            </span>
+          </div>
+
+          <!-- Головний заголовок -->
+          <h1 class="font-display font-800 text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight mb-6" style="animation: fadeUp 0.7s 0.1s ease both;">
+            Академія<br />
+            юного<br />
+            <span class="text-accent">інженера</span><br />
+            Мирослава
+          </h1>
+
+          <!-- Підзаголовок -->
+          <p class="text-base md:text-lg text-ink/60 max-w-xl leading-relaxed mb-8" style="animation: fadeUp 0.7s 0.2s ease both;">
+            Три місяці. Одинадцять місій. Один справжній інженер наприкінці.
+            Моносайкл, Raspberry Pi, 3D-друк, VPN і море — не як задача, а як пригода.
+          </p>
+
+          <!-- CTA кнопки -->
+          <div class="flex flex-wrap gap-3" style="animation: fadeUp 0.7s 0.3s ease both;">
+            <a href="#goals"
+               class="inline-flex items-center gap-2 bg-accent text-white font-display font-600 px-6 py-3 rounded-xl hover:bg-accent/90 transition-all duration-200 hover:scale-105 shadow-lg shadow-accent/20">
+              Перейти до цілей
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+              </svg>
+            </a>
+            <a href="#journal"
+               class="inline-flex items-center gap-2 bg-ink text-paper font-display font-600 px-6 py-3 rounded-xl hover:bg-ink/80 transition-all duration-200 hover:scale-105">
+              Відкрити журнал
+            </a>
+          </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-16 max-w-2xl" style="animation: fadeUp 0.7s 0.45s ease both;">
+          <div class="bg-white/60 backdrop-blur-sm border border-cream rounded-2xl p-4 text-center">
+            <div class="font-display font-800 text-3xl text-accent">11</div>
+            <div class="text-xs text-ink/50 mt-1 font-medium uppercase tracking-wide">місій</div>
+          </div>
+          <div class="bg-white/60 backdrop-blur-sm border border-cream rounded-2xl p-4 text-center">
+            <div class="font-display font-800 text-3xl text-teal">3</div>
+            <div class="text-xs text-ink/50 mt-1 font-medium uppercase tracking-wide">місяці</div>
+          </div>
+          <div class="bg-white/60 backdrop-blur-sm border border-cream rounded-2xl p-4 text-center">
+            <div class="font-display font-800 text-3xl text-gold">7</div>
+            <div class="text-xs text-ink/50 mt-1 font-medium uppercase tracking-wide">проєктів</div>
+          </div>
+          <div class="bg-white/60 backdrop-blur-sm border border-cream rounded-2xl p-4 text-center">
+            <div class="font-display font-800 text-3xl text-ink">∞</div>
+            <div class="text-xs text-ink/50 mt-1 font-medium uppercase tracking-wide">цікавого</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         ABOUT — МІСІЯ І ПРАВИЛА
+         ===================================================== -->
+    <section id="about" class="py-20 md:py-28 bg-ink text-paper">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+          <!-- Ліва колонка — текст -->
+          <div class="reveal">
+            <span class="text-xs font-600 uppercase tracking-widest text-accent mb-4 block">Місія</span>
+            <h2 class="font-display font-700 text-3xl md:text-4xl lg:text-5xl leading-tight mb-6">
+              Це не<br />канікули.<br />
+              <span class="text-accent">Це стажування.</span>
+            </h2>
+            <p class="text-paper/60 text-base md:text-lg leading-relaxed mb-8">
+              Мирослав — інженер на стажуванні. Щодня трохи: 20 хвилин спорту,
+              30 хвилин техніки, нотатка в журналі. До вересня — не оцінки,
+              а живі проєкти і навички, які можна потримати в руках.
+            </p>
+
+            <!-- Розподіл "сам / з дорослим" -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-teal/10 border border-teal/20 rounded-xl p-4">
+                <div class="text-teal font-display font-600 text-sm mb-2">🟢 Сам</div>
+                <ul class="text-paper/60 text-xs space-y-1 leading-relaxed">
+                  <li>Tinkercad / 3D-моделі</li>
+                  <li>Python на MacBook</li>
+                  <li>Terminal — команди</li>
+                  <li>SSH до свого Pi</li>
+                  <li>Сайт, щоденник</li>
+                </ul>
+              </div>
+              <div class="bg-gold/10 border border-gold/20 rounded-xl p-4">
+                <div class="text-gold font-display font-600 text-sm mb-2">🟡 З дорослим</div>
+                <ul class="text-paper/60 text-xs space-y-1 leading-relaxed">
+                  <li>Роутер — налаштування</li>
+                  <li>Схема мережі</li>
+                  <li>Файловий сервер</li>
+                  <li>VPN — встановлення</li>
+                  <li>3D-принтер</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Права колонка — правила -->
+          <div class="reveal">
+            <h3 class="font-display font-600 text-xl mb-6 text-paper/80">📜 Правила академії</h3>
+            <div class="space-y-4">
+
+              <div class="flex gap-4 p-4 bg-paper/5 rounded-xl border border-paper/10 hover:bg-paper/10 transition-colors duration-200">
+                <span class="text-2xl flex-shrink-0">🛡️</span>
+                <div>
+                  <div class="font-display font-600 text-sm text-paper mb-1">Безпека перш за все</div>
+                  <div class="text-paper/50 text-xs leading-relaxed">Краще зробити повільно і правильно, ніж швидко і все зламати.</div>
+                </div>
+              </div>
+
+              <div class="flex gap-4 p-4 bg-paper/5 rounded-xl border border-paper/10 hover:bg-paper/10 transition-colors duration-200">
+                <span class="text-2xl flex-shrink-0">🐢</span>
+                <div>
+                  <div class="font-display font-600 text-sm text-paper mb-1">Маленький крок щодня</div>
+                  <div class="text-paper/50 text-xs leading-relaxed">20 хвилин практики щодня — потужніше за 3 години у суботу.</div>
+                </div>
+              </div>
+
+              <div class="flex gap-4 p-4 bg-paper/5 rounded-xl border border-paper/10 hover:bg-paper/10 transition-colors duration-200">
+                <span class="text-2xl flex-shrink-0">⚖️</span>
+                <div>
+                  <div class="font-display font-600 text-sm text-paper mb-1">Баланс</div>
+                  <div class="text-paper/50 text-xs leading-relaxed">Спорт, мозок і відпочинок — рівні частини. Тільки Pi — не баланс.</div>
+                </div>
+              </div>
+
+              <div class="flex gap-4 p-4 bg-paper/5 rounded-xl border border-paper/10 hover:bg-paper/10 transition-colors duration-200">
+                <span class="text-2xl flex-shrink-0">👨‍💻</span>
+                <div>
+                  <div class="font-display font-600 text-sm text-paper mb-1">Роутер — тільки з дорослим</div>
+                  <div class="text-paper/50 text-xs leading-relaxed">Один неправильний клік — і домашній інтернет «відпочиває».</div>
+                </div>
+              </div>
+
+              <div class="flex gap-4 p-4 bg-paper/5 rounded-xl border border-paper/10 hover:bg-paper/10 transition-colors duration-200">
+                <span class="text-2xl flex-shrink-0">📓</span>
+                <div>
+                  <div class="font-display font-600 text-sm text-paper mb-1">Щоденник дослідника</div>
+                  <div class="text-paper/50 text-xs leading-relaxed">3–4 рази на тиждень. Записав — значить вивчив.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         MONTHS — ПЛАН ПО МІСЯЦЯХ (TABS)
+         ===================================================== -->
+    <section id="months" class="py-20 md:py-28 bg-cream">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="reveal text-center mb-12">
+          <span class="text-xs font-600 uppercase tracking-widest text-accent mb-4 block">Три рівні</span>
+          <h2 class="font-display font-700 text-3xl md:text-4xl lg:text-5xl">Дорожня карта</h2>
+        </div>
+
+        <!-- Таб-кнопки -->
+        <div class="flex flex-wrap justify-center gap-2 mb-10 reveal" role="tablist" aria-label="Місяці">
+          <button role="tab" aria-selected="true"  aria-controls="tab-jun" id="btn-jun"
+                  class="tab-btn tab-active font-display font-600 px-5 py-2.5 rounded-full text-sm border border-transparent transition-all duration-200 hover:scale-105"
+                  onclick="switchTab('jun')">
+            🌱 Червень — Рівень 1
+          </button>
+          <button role="tab" aria-selected="false" aria-controls="tab-jul" id="btn-jul"
+                  class="tab-btn font-display font-600 px-5 py-2.5 rounded-full text-sm border border-ink/10 transition-all duration-200 hover:scale-105"
+                  onclick="switchTab('jul')">
+            ⚙️ Липень — Рівень 2
+          </button>
+          <button role="tab" aria-selected="false" aria-controls="tab-aug" id="btn-aug"
+                  class="tab-btn font-display font-600 px-5 py-2.5 rounded-full text-sm border border-ink/10 transition-all duration-200 hover:scale-105"
+                  onclick="switchTab('aug')">
+            🏆 Серпень — Рівень 3
+          </button>
+        </div>
+
+        <!-- Вміст табів -->
+        <div>
+
+          <!-- Червень -->
+          <div id="tab-jun" role="tabpanel" aria-labelledby="btn-jun" class="tab-panel reveal">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-white rounded-2xl p-6 shadow-sm border border-cream">
+                <span class="inline-block month-jun text-xs font-600 px-3 py-1 rounded-full mb-4">Червень — Старт і база</span>
+                <h3 class="font-display font-700 text-xl mb-4">Знайомство з усім інструментарієм</h3>
+                <ul class="space-y-2.5 text-sm text-ink/70 leading-relaxed">
+                  <li class="flex gap-2"><span class="text-teal mt-0.5">→</span> Моносайкл: баланс біля стіни, перші метри без опори</li>
+                  <li class="flex gap-2"><span class="text-teal mt-0.5">→</span> Спорт: вис, негативні підтягування, відтискання з колін</li>
+                  <li class="flex gap-2"><span class="text-teal mt-0.5">→</span> Raspberry Pi: SSH з MacBook, перший Python-скрипт, LED</li>
+                  <li class="flex gap-2"><span class="text-teal mt-0.5">→</span> Tinkercad: реєстрація, 3 прості форми, з'єднання деталей</li>
+                  <li class="flex gap-2"><span class="text-teal mt-0.5">→</span> Мережа: знайти IP роутера, зайти разом із дорослим</li>
+                  <li class="flex gap-2"><span class="text-teal mt-0.5">→</span> Terminal на Mac: 10 базових команд</li>
+                  <li class="flex gap-2"><span class="text-teal mt-0.5">→</span> Починаємо щоденник дослідника</li>
+                </ul>
+              </div>
+              <div class="flex flex-col gap-4">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-cream flex-1">
+                  <img
+                    src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?w=700&q=75"
+                    alt="Raspberry Pi та електроніка"
+                    class="w-full h-40 object-cover"
+                    loading="lazy"
+                  />
+                  <div class="p-4">
+                    <p class="text-xs font-600 text-accent uppercase tracking-wide mb-1">Головний фокус</p>
+                    <p class="text-sm text-ink/70">Не намагайтесь пройти все одразу. Перший тиждень — навмисно легкий, щоб звикнути до ритму.</p>
+                  </div>
+                </div>
+                <div class="bg-ink text-paper rounded-2xl p-5">
+                  <div class="font-display font-700 text-lg mb-2">Типовий день</div>
+                  <div class="text-paper/60 text-sm space-y-1">
+                    <div>🕘 Ранок: 20 хв спорт</div>
+                    <div>🕐 День: 30 хв техніка або Tinkercad</div>
+                    <div>🕕 Вечір: 10 хв щоденник</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Липень -->
+          <div id="tab-jul" role="tabpanel" aria-labelledby="btn-jul" class="tab-panel hidden reveal">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-white rounded-2xl p-6 shadow-sm border border-cream">
+                <span class="inline-block month-jul text-xs font-600 px-3 py-1 rounded-full mb-4">Липень — Проєкти і пригоди</span>
+                <h3 class="font-display font-700 text-xl mb-4">Все, що вивчив — збираємо в реальні штуки</h3>
+                <ul class="space-y-2.5 text-sm text-ink/70 leading-relaxed">
+                  <li class="flex gap-2"><span class="text-gold mt-0.5">→</span> Моносайкл: 5+ метрів без допомоги</li>
+                  <li class="flex gap-2"><span class="text-gold mt-0.5">→</span> Спорт: перше чисте підтягування, 10 відтискань</li>
+                  <li class="flex gap-2"><span class="text-gold mt-0.5">→</span> Raspberry Pi: підключити мотор, скрипт керування</li>
+                  <li class="flex gap-2"><span class="text-gold mt-0.5">→</span> Файловий сервер з дорослим — Samba або HTTP</li>
+                  <li class="flex gap-2"><span class="text-gold mt-0.5">→</span> Схема мережі в draw.io або на папері</li>
+                  <li class="flex gap-2"><span class="text-gold mt-0.5">→</span> 3D: перша корисна модель (підставка, брелок)</li>
+                  <li class="flex gap-2"><span class="text-gold mt-0.5">→</span> 🌊 Море: морський щоденник і колекція</li>
+                  <li class="flex gap-2"><span class="text-gold mt-0.5">→</span> Простий HTML+CSS сайт на GitHub Pages</li>
+                </ul>
+              </div>
+              <div class="flex flex-col gap-4">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-cream flex-1">
+                  <img
+                    src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&q=75"
+                    alt="Море та відпочинок"
+                    class="w-full h-40 object-cover"
+                    loading="lazy"
+                  />
+                  <div class="p-4">
+                    <p class="text-xs font-600 text-gold uppercase tracking-wide mb-1">Море — теж місія</p>
+                    <p class="text-sm text-ink/70">Морський щоденник, карта пляжу, колекція черепашок — це наука і спостереження, а не просто відпочинок.</p>
+                  </div>
+                </div>
+                <div class="bg-gold/10 border border-gold/20 rounded-2xl p-5">
+                  <div class="font-display font-700 text-lg mb-2">Суботній проєкт</div>
+                  <div class="text-ink/70 text-sm">Кожна субота — великий проєкт 60–90 хв з дорослим. Решта тижня — короткі сесії по 20–40 хв.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Серпень -->
+          <div id="tab-aug" role="tabpanel" aria-labelledby="btn-aug" class="tab-panel hidden reveal">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-white rounded-2xl p-6 shadow-sm border border-cream">
+                <span class="inline-block month-aug text-xs font-600 px-3 py-1 rounded-full mb-4">Серпень — Майстерність і фінал</span>
+                <h3 class="font-display font-700 text-xl mb-4">Завершення місій + День винахідника</h3>
+                <ul class="space-y-2.5 text-sm text-ink/70 leading-relaxed">
+                  <li class="flex gap-2"><span class="text-accent mt-0.5">→</span> Моносайкл: фінальний маршрут без допомоги</li>
+                  <li class="flex gap-2"><span class="text-accent mt-0.5">→</span> Спорт: 5 підтягувань + 15 відтискань — фінальний тест</li>
+                  <li class="flex gap-2"><span class="text-accent mt-0.5">→</span> VPN: PiVPN (WireGuard) з дорослим, підключення з телефону</li>
+                  <li class="flex gap-2"><span class="text-accent mt-0.5">→</span> 3D: модульна конструкція з 2–3 частин, надрукувати</li>
+                  <li class="flex gap-2"><span class="text-accent mt-0.5">→</span> Презентація: слайди або розповідь</li>
+                  <li class="flex gap-2"><span class="text-accent mt-0.5">→</span> День винахідника для родини</li>
+                  <li class="flex gap-2"><span class="text-accent mt-0.5">→</span> Архів проєктів, впорядкований щоденник</li>
+                </ul>
+              </div>
+              <div class="flex flex-col gap-4">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-cream flex-1">
+                  <img
+                    src="https://images.unsplash.com/photo-1632166737861-5f46d2ca10c7?w=700&q=75"
+                    alt="3D принтер та модель"
+                    class="w-full h-40 object-cover"
+                    loading="lazy"
+                  />
+                  <div class="p-4">
+                    <p class="text-xs font-600 text-accent uppercase tracking-wide mb-1">Фінальна місія</p>
+                    <p class="text-sm text-ink/70">«День винахідника» — показати родині все: робота, схему, сервер, моделі, сайт. Справжній інженер.</p>
+                  </div>
+                </div>
+                <div class="bg-accent text-white rounded-2xl p-5">
+                  <div class="font-display font-700 text-lg mb-2">🎓 Головний результат</div>
+                  <div class="text-white/80 text-sm">Не просто навички — впевненість: «Я можу взяти незнайоме завдання, розібратися, зробити і пояснити».</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         WEEK SCHEDULE — ТИЖНЕВИЙ РОЗКЛАД
+         ===================================================== -->
+    <section class="py-20 md:py-24 bg-paper">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="reveal text-center mb-12">
+          <span class="text-xs font-600 uppercase tracking-widest text-accent mb-4 block">Ритм</span>
+          <h2 class="font-display font-700 text-3xl md:text-4xl">Типовий тиждень</h2>
+          <p class="text-ink/50 text-sm mt-3">Заняття 20–45 хвилин — не більше. Дитині 8 років важливий ритм, а не тривалість.</p>
+        </div>
+
+        <!-- Сітка тижня — 7 карток -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 reveal">
+
+          <!-- Понеділок -->
+          <div class="bg-teal/5 border border-teal/20 rounded-2xl p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="font-display font-700 text-xs text-teal uppercase tracking-wide mb-3">Пн</div>
+            <div class="space-y-2">
+              <span class="block text-xs bg-teal/10 text-teal rounded-lg px-2 py-1">💪 Спорт</span>
+              <p class="text-xs text-ink/60 leading-relaxed">Моносайкл 20 хв<br/>Підтягування 15 хв</p>
+            </div>
+          </div>
+
+          <!-- Вівторок -->
+          <div class="bg-accent/5 border border-accent/20 rounded-2xl p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="font-display font-700 text-xs text-accent uppercase tracking-wide mb-3">Вт</div>
+            <div class="space-y-2">
+              <span class="block text-xs bg-accent/10 text-accent rounded-lg px-2 py-1">🤖 Техніка</span>
+              <p class="text-xs text-ink/60 leading-relaxed">Raspberry Pi<br/>або Python 35 хв<br/>Щоденник 10 хв</p>
+            </div>
+          </div>
+
+          <!-- Середа -->
+          <div class="bg-teal/5 border border-teal/20 rounded-2xl p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="font-display font-700 text-xs text-teal uppercase tracking-wide mb-3">Ср</div>
+            <div class="space-y-2">
+              <span class="block text-xs bg-teal/10 text-teal rounded-lg px-2 py-1">💪 Спорт</span>
+              <p class="text-xs text-ink/60 leading-relaxed">Спорт 20 хв<br/>Прогулянка,<br/>ігри, відпочинок</p>
+            </div>
+          </div>
+
+          <!-- Четвер -->
+          <div class="bg-accent/5 border border-accent/20 rounded-2xl p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="font-display font-700 text-xs text-accent uppercase tracking-wide mb-3">Чт</div>
+            <div class="space-y-2">
+              <span class="block text-xs bg-accent/10 text-accent rounded-lg px-2 py-1">🖨️ 3D</span>
+              <p class="text-xs text-ink/60 leading-relaxed">Tinkercad 30 хв<br/>або мережа<br/>з дорослим</p>
+            </div>
+          </div>
+
+          <!-- П'ятниця -->
+          <div class="bg-teal/5 border border-teal/20 rounded-2xl p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="font-display font-700 text-xs text-teal uppercase tracking-wide mb-3">Пт</div>
+            <div class="space-y-2">
+              <span class="block text-xs bg-teal/10 text-teal rounded-lg px-2 py-1">💪 Спорт</span>
+              <p class="text-xs text-ink/60 leading-relaxed">Моносайкл 25 хв<br/>Щоденник 10 хв</p>
+            </div>
+          </div>
+
+          <!-- Субота -->
+          <div class="bg-gold/5 border border-gold/20 rounded-2xl p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="font-display font-700 text-xs text-gold uppercase tracking-wide mb-3">Сб</div>
+            <div class="space-y-2">
+              <span class="block text-xs bg-gold/10 text-gold rounded-lg px-2 py-1">🔨 Проєкт</span>
+              <p class="text-xs text-ink/60 leading-relaxed">Великий проєкт<br/>60–90 хв<br/>з дорослим</p>
+            </div>
+          </div>
+
+          <!-- Неділя -->
+          <div class="bg-cream border border-ink/10 rounded-2xl p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="font-display font-700 text-xs text-mist uppercase tracking-wide mb-3">Нд</div>
+            <div class="space-y-2">
+              <span class="block text-xs bg-mist/10 text-mist rounded-lg px-2 py-1">😎 Вільно</span>
+              <p class="text-xs text-ink/60 leading-relaxed">Море, ігри,<br/>відпочинок<br/>(може: відео)</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         GOALS — ЦІЛІ З ЧЕКБОКСАМИ І ПРОГРЕСОМ
+         ===================================================== -->
+    <section id="goals" class="py-20 md:py-28 bg-ink text-paper">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="reveal text-center mb-4">
+          <span class="text-xs font-600 uppercase tracking-widest text-accent mb-4 block">Чекліст місій</span>
+          <h2 class="font-display font-700 text-3xl md:text-4xl lg:text-5xl">11 цілей на літо</h2>
+          <p class="text-paper/50 text-sm mt-3">Відмічай виконане — прогрес зберігається у браузері.</p>
+        </div>
+
+        <!-- Загальний прогрес-бар -->
+        <div class="reveal max-w-xl mx-auto mb-12">
+          <div class="flex justify-between text-xs text-paper/40 mb-2 font-medium">
+            <span>Прогрес літа</span>
+            <span id="goal-pct">0%</span>
+          </div>
+          <div class="h-2 bg-paper/10 rounded-full overflow-hidden">
+            <div id="goal-bar" class="h-full bg-gradient-to-r from-teal to-accent rounded-full transition-all duration-500" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Сітка цілей -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 reveal" id="goals-grid">
+
+          <!-- Ціль: Моносайкл -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g1')" role="button" aria-label="Моносайкл">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🛞</span>
+              <div id="g1-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">Моносайкл</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">Від балансу біля стіни до фінального маршруту без допомоги.</p>
+            <div class="text-xs font-600 text-teal">Фінал: маршрут без допомоги</div>
+          </div>
+
+          <!-- Ціль: Підтягування -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g2')" role="button" aria-label="Підтягування">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">💪</span>
+              <div id="g2-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">Підтягування × 5</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">Вис → негативні → австралійські → 5 чистих. Без ривків.</p>
+            <div class="text-xs font-600 text-teal">Фінал: 5 чистих підтягувань</div>
+          </div>
+
+          <!-- Ціль: Віджимання -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g3')" role="button" aria-label="Віджимання">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🤸</span>
+              <div id="g3-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">Віджимання × 15</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">З колін → 10 з ніг → 15 чистих. Повільно і контрольовано.</p>
+            <div class="text-xs font-600 text-teal">Фінал: 15 з ніг</div>
+          </div>
+
+          <!-- Ціль: Raspberry Pi -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g4')" role="button" aria-label="Raspberry Pi">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🤖</span>
+              <div id="g4-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">Робот на Raspberry Pi</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">SSH → Python → мотор → рухомий робот зі свого MacBook Air.</p>
+            <div class="text-xs font-600 text-gold">⚡ Частково з дорослим</div>
+          </div>
+
+          <!-- Ціль: Роутер -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g5')" role="button" aria-label="Роутер">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🌐</span>
+              <div id="g5-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">Роутер і мережа</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">Зайти на роутер, переглянути пристрої, намалювати схему.</p>
+            <div class="text-xs font-600 text-gold">⚡ З дорослим обов'язково</div>
+          </div>
+
+          <!-- Ціль: Схема мережі -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g6')" role="button" aria-label="Схема мережі">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🗺️</span>
+              <div id="g6-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">Схема домашньої мережі</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">Намалювати схему: роутер, пристрої, IP-адреси, підписи.</p>
+            <div class="text-xs font-600 text-teal">Фінал: схема + пояснення</div>
+          </div>
+
+          <!-- Ціль: Файловий сервер -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g7')" role="button" aria-label="Файловий сервер">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🗄️</span>
+              <div id="g7-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">Файловий сервер на Pi</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">Samba або HTTP-сервер. Покласти файл з MacBook — забрати з іншого пристрою.</p>
+            <div class="text-xs font-600 text-gold">⚡ З дорослим</div>
+          </div>
+
+          <!-- Ціль: VPN -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g8')" role="button" aria-label="VPN">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🔒</span>
+              <div id="g8-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">VPN для домашньої мережі</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">PiVPN (WireGuard). Підключитись з телефону. Пояснити що таке VPN.</p>
+            <div class="text-xs font-600 text-gold">⚡ З дорослим обов'язково</div>
+          </div>
+
+          <!-- Ціль: Tinkercad -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g9')" role="button" aria-label="Tinkercad">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🖨️</span>
+              <div id="g9-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">3D-моделі в Tinkercad</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">3 базові форми → корисна деталь → модульна конструкція.</p>
+            <div class="text-xs font-600 text-teal">Сам. Принтер — з дорослим</div>
+          </div>
+
+          <!-- Ціль: Море -->
+          <div class="goal-card bg-paper/5 border border-paper/10 rounded-2xl p-5 hover:bg-paper/10 transition-all duration-200 hover:scale-[1.02] cursor-pointer" onclick="toggleGoal('g10')" role="button" aria-label="Море">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🌊</span>
+              <div id="g10-check" class="w-6 h-6 rounded-full border-2 border-paper/20 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">Море</h3>
+            <p class="text-paper/50 text-xs leading-relaxed mb-3">Морський щоденник, карта пляжу, колекція знахідок з підписами.</p>
+            <div class="text-xs font-600 text-teal">Фінал: щоденник + колекція</div>
+          </div>
+
+          <!-- Ціль: День винахідника -->
+          <div class="goal-card bg-gradient-to-br from-accent/20 to-gold/10 border border-accent/30 rounded-2xl p-5 hover:scale-[1.02] transition-all duration-200 cursor-pointer sm:col-span-2 lg:col-span-1" onclick="toggleGoal('g11')" role="button" aria-label="День винахідника">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">🎤</span>
+              <div id="g11-check" class="w-6 h-6 rounded-full border-2 border-accent/40 flex-shrink-0 transition-all duration-200 flex items-center justify-center text-xs"></div>
+            </div>
+            <h3 class="font-display font-700 text-base mb-2">День винахідника</h3>
+            <p class="text-paper/60 text-xs leading-relaxed mb-3">Презентація всього літа для родини. Показати, пояснити, відповісти на питання.</p>
+            <div class="text-xs font-600 text-accent">🏆 ФІНАЛЬНА МІСІЯ</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         PROJECTS — ПРОЄКТИ ЛІТА
+         ===================================================== -->
+    <section id="projects" class="py-20 md:py-28 bg-paper">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="reveal text-center mb-12">
+          <span class="text-xs font-600 uppercase tracking-widest text-accent mb-4 block">Практика</span>
+          <h2 class="font-display font-700 text-3xl md:text-4xl lg:text-5xl">7 проєктів літа</h2>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 reveal">
+
+          <!-- Проєкт 1 -->
+          <article class="group bg-white rounded-2xl border border-cream overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div class="relative h-44 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=75"
+                   alt="Робот Raspberry Pi"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                   loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
+              <span class="absolute bottom-3 left-4 text-white font-display font-700 text-sm">Проєкт 01</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-700 text-lg mb-2">🤖 Мій перший робот</h3>
+              <p class="text-ink/60 text-sm leading-relaxed mb-3">Raspberry Pi + сервопривід або мотор. SSH → Python → керування → демонстрація.</p>
+              <div class="text-xs font-600 text-accent border-t border-cream pt-3 mt-auto">Фінал: "Ось мій робот, я його запрограмував"</div>
+            </div>
+          </article>
+
+          <!-- Проєкт 2 -->
+          <article class="group bg-white rounded-2xl border border-cream overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div class="relative h-44 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=75"
+                   alt="Мережева схема"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                   loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
+              <span class="absolute bottom-3 left-4 text-white font-display font-700 text-sm">Проєкт 02</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-700 text-lg mb-2">🗺️ Карта домашньої мережі</h3>
+              <p class="text-ink/60 text-sm leading-relaxed mb-3">draw.io або папір: роутер, пристрої, IP-адреси, підписи. З дорослим — зайти на роутер.</p>
+              <div class="text-xs font-600 text-accent border-t border-cream pt-3">Фінал: схема яку можна пояснити</div>
+            </div>
+          </article>
+
+          <!-- Проєкт 3 -->
+          <article class="group bg-white rounded-2xl border border-cream overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div class="relative h-44 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=75"
+                   alt="Сервер дата-центр"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                   loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
+              <span class="absolute bottom-3 left-4 text-white font-display font-700 text-sm">Проєкт 03</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-700 text-lg mb-2">🗄️ Pi Файловий сервер</h3>
+              <p class="text-ink/60 text-sm leading-relaxed mb-3">Samba або Python HTTP. Підключитись з MacBook, покласти файл — забрати з іншого пристрою.</p>
+              <div class="text-xs font-600 text-gold border-t border-cream pt-3">⚡ З дорослим</div>
+            </div>
+          </article>
+
+          <!-- Проєкт 4 -->
+          <article class="group bg-white rounded-2xl border border-cream overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div class="relative h-44 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?w=600&q=75"
+                   alt="3D принтер"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                   loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
+              <span class="absolute bottom-3 left-4 text-white font-display font-700 text-sm">Проєкт 04</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-700 text-lg mb-2">🔧 3D-деталь для дому</h3>
+              <p class="text-ink/60 text-sm leading-relaxed mb-3">Tinkercad → STL → слайсер → друк. Підставка, кришка або брелок з іменем.</p>
+              <div class="text-xs font-600 text-accent border-t border-cream pt-3">Фінал: тримати в руках те, що сам зробив</div>
+            </div>
+          </article>
+
+          <!-- Проєкт 5 -->
+          <article class="group bg-white rounded-2xl border border-cream overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div class="relative h-44 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=75"
+                   alt="Море та берег"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                   loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
+              <span class="absolute bottom-3 left-4 text-white font-display font-700 text-sm">Проєкт 05</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-700 text-lg mb-2">🌊 Морський щоденник</h3>
+              <p class="text-ink/60 text-sm leading-relaxed mb-3">Щодня: погода, хвилі, знахідки, фото. Карта пляжу. Колекція черепашок з підписами.</p>
+              <div class="text-xs font-600 text-teal border-t border-cream pt-3">Фінал: наукова звітність про поїздку</div>
+            </div>
+          </article>
+
+          <!-- Проєкт 6 -->
+          <article class="group bg-white rounded-2xl border border-cream overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div class="relative h-44 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=75"
+                   alt="Код на екрані"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                   loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
+              <span class="absolute bottom-3 left-4 text-white font-display font-700 text-sm">Проєкт 06</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-700 text-lg mb-2">💻 Сайт "Моє літо"</h3>
+              <p class="text-ink/60 text-sm leading-relaxed mb-3">HTML + CSS → фото, текст, список проєктів → GitHub Pages. Справжня URL-адреса.</p>
+              <div class="text-xs font-600 text-accent border-t border-cream pt-3">Фінал: посилання яке можна надіслати другу</div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         JOURNAL — ЩОДЕННИК ДОСЛІДНИКА (ІНТЕРАКТИВНИЙ)
+         ===================================================== -->
+    <section id="journal" class="py-20 md:py-28 bg-cream">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="reveal text-center mb-12">
+          <span class="text-xs font-600 uppercase tracking-widest text-accent mb-4 block">Документація</span>
+          <h2 class="font-display font-700 text-3xl md:text-4xl">Щоденник дослідника</h2>
+          <p class="text-ink/50 text-sm mt-3">3–4 рази на тиждень. 10 хвилин. Все зберігається у цьому браузері.</p>
+        </div>
+
+        <div class="reveal">
+
+          <!-- Шапка журналу -->
+          <div class="bg-ink text-paper rounded-t-2xl px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            <div class="font-display font-700 text-lg">📓 Журнал Мирослава</div>
+            <div class="flex gap-2">
+              <button onclick="saveEntry()" class="bg-accent hover:bg-accent/80 text-white text-xs font-600 px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105">
+                Зберегти запис
+              </button>
+              <button onclick="clearEntry()" class="bg-paper/10 hover:bg-paper/20 text-paper text-xs font-600 px-4 py-2 rounded-lg transition-all duration-200">
+                Очистити
+              </button>
+            </div>
+          </div>
+
+          <!-- Форма запису -->
+          <div class="bg-white border-x border-b border-cream rounded-b-2xl p-6 space-y-5">
+
+            <!-- Дата та рейтинг -->
+            <div class="flex flex-wrap items-center gap-4">
+              <div class="flex-1 min-w-[160px]">
+                <label class="block text-xs font-600 uppercase tracking-wide text-ink/40 mb-1.5" for="journal-date">Дата</label>
+                <input type="date" id="journal-date" class="w-full border border-cream rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/40 bg-cream/50" />
+              </div>
+              <div>
+                <label class="block text-xs font-600 uppercase tracking-wide text-ink/40 mb-1.5">Рейтинг дня</label>
+                <div id="star-rating" class="flex gap-1" role="group" aria-label="Рейтинг дня">
+                  <button onclick="setRating(1)" class="star-btn text-2xl transition-all duration-150 hover:scale-125" data-star="1" aria-label="1 зірка">☆</button>
+                  <button onclick="setRating(2)" class="star-btn text-2xl transition-all duration-150 hover:scale-125" data-star="2" aria-label="2 зірки">☆</button>
+                  <button onclick="setRating(3)" class="star-btn text-2xl transition-all duration-150 hover:scale-125" data-star="3" aria-label="3 зірки">☆</button>
+                  <button onclick="setRating(4)" class="star-btn text-2xl transition-all duration-150 hover:scale-125" data-star="4" aria-label="4 зірки">☆</button>
+                  <button onclick="setRating(5)" class="star-btn text-2xl transition-all duration-150 hover:scale-125" data-star="5" aria-label="5 зірок">☆</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Питання журналу -->
+            <div>
+              <label class="block text-xs font-600 uppercase tracking-wide text-teal mb-1.5" for="j-done">🔧 Що я сьогодні зробив?</label>
+              <textarea id="j-done" class="journal-area w-full border border-cream rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal/20 focus:border-teal/40 bg-cream/30 transition-all" placeholder="Опиши своїми словами..."></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-600 uppercase tracking-wide text-accent mb-1.5" for="j-hard">😤 Що було складно?</label>
+              <textarea id="j-hard" class="journal-area w-full border border-cream rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40 bg-cream/30 transition-all" placeholder="Що не вийшло з першого разу?"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-600 uppercase tracking-wide text-gold mb-1.5" for="j-win">🚀 Що вийшло краще, ніж учора?</label>
+              <textarea id="j-win" class="journal-area w-full border border-cream rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold/40 bg-cream/30 transition-all" placeholder="Будь-який прогрес рахується!"></textarea>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-600 uppercase tracking-wide text-mist mb-1.5" for="j-word">📚 Нове слово (UA або EN)</label>
+                <input type="text" id="j-word" class="w-full border border-cream rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-mist/20 focus:border-mist/40 bg-cream/30" placeholder="наприклад: router, протокол..." />
+              </div>
+              <div>
+                <label class="block text-xs font-600 uppercase tracking-wide text-mist mb-1.5" for="j-next">🔭 Дослідити завтра?</label>
+                <input type="text" id="j-next" class="w-full border border-cream rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-mist/20 focus:border-mist/40 bg-cream/30" placeholder="Одне питання або ідея..." />
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Збережені записи -->
+          <div id="entries-container" class="mt-8">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-display font-700 text-lg">Попередні записи</h3>
+              <span id="entries-count" class="text-xs font-600 text-mist bg-mist/10 px-3 py-1 rounded-full">0 записів</span>
+            </div>
+            <div id="entries-list" class="space-y-3">
+              <p class="text-ink/40 text-sm text-center py-8 bg-white rounded-2xl border border-cream">Тут з'являться твої записи після першого збереження 📝</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         SAFETY — ПРАВИЛА БЕЗПЕКИ
+         ===================================================== -->
+    <section id="safety" class="py-20 md:py-28 bg-paper">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="reveal text-center mb-12">
+          <span class="text-xs font-600 uppercase tracking-widest text-accent mb-4 block">Важливо</span>
+          <h2 class="font-display font-700 text-3xl md:text-4xl">🛡️ Правила безпеки</h2>
+          <p class="text-ink/50 text-sm mt-3">Пояснено просто. Але серйозно.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 reveal">
+
+          <!-- Моносайкл -->
+          <div class="bg-white rounded-2xl border border-cream p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="text-3xl mb-3">🛞</div>
+            <h3 class="font-display font-700 text-base mb-3">Моносайкл</h3>
+            <ul class="space-y-2 text-sm text-ink/70">
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Шолом — завжди. Навіть "на 2 секунди".</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Наколінники перші 2–3 тижні.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Тільки рівна поверхня, не дорога.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Дорослий або хтось поряд.</li>
+            </ul>
+          </div>
+
+          <!-- Турнік -->
+          <div class="bg-white rounded-2xl border border-cream p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="text-3xl mb-3">💪</div>
+            <h3 class="font-display font-700 text-base mb-3">Турнік і відтискання</h3>
+            <ul class="space-y-2 text-sm text-ink/70">
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Розминка 3–5 хв перед вправами.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Ніяких ривків — це травма.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Болить — зупиняємось без суперечок.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Перевірити турнік перед тренуванням.</li>
+            </ul>
+          </div>
+
+          <!-- Електроніка -->
+          <div class="bg-white rounded-2xl border border-cream p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="text-3xl mb-3">🔌</div>
+            <h3 class="font-display font-700 text-base mb-3">Електроніка (Pi, Arduino)</h3>
+            <ul class="space-y-2 text-sm text-ink/70">
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Вимкнути Pi перед тим, як чіпати дроти.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Метал на платі = зламана плата.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Дим або запах → вимкнути й кликати дорослого.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Дроти тримати за вилку, не за кабель.</li>
+            </ul>
+          </div>
+
+          <!-- Роутер -->
+          <div class="bg-white rounded-2xl border border-cream p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="text-3xl mb-3">🌐</div>
+            <h3 class="font-display font-700 text-base mb-3">Роутер і мережа</h3>
+            <ul class="space-y-2 text-sm text-ink/70">
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Жодних змін без дорослого поряд — жодних.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Паролі не зберігати у текстовому файлі.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> "Скинути до заводських" — тільки з дорослим.</li>
+            </ul>
+          </div>
+
+          <!-- 3D-принтер -->
+          <div class="bg-white rounded-2xl border border-cream p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="text-3xl mb-3">🖨️</div>
+            <h3 class="font-display font-700 text-base mb-3">3D-принтер</h3>
+            <ul class="space-y-2 text-sm text-ink/70">
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Перший запуск — тільки з дорослим.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Сопло і столик — гарячі (200°C+), не торкатись.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Не залишати принтер без нагляду надовго.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Пластик після друку — гострий, обережно.</li>
+            </ul>
+          </div>
+
+          <!-- Море -->
+          <div class="bg-white rounded-2xl border border-cream p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <div class="text-3xl mb-3">🌊</div>
+            <h3 class="font-display font-700 text-base mb-3">Море</h3>
+            <ul class="space-y-2 text-sm text-ink/70">
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> У воду — тільки коли дорослий дивиться.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Сонцезахисний крем кожні 2 години.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Не глибше, ніж домовились. Без суперечок.</li>
+              <li class="flex gap-2"><span class="text-accent font-700 mt-0.5">!</span> Сильні хвилі → залишаємось на березі.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         FINAL — ФІНАЛЬНИЙ РЕЗУЛЬТАТ
+         ===================================================== -->
+    <section class="py-20 md:py-28 bg-ink text-paper">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+        <div class="reveal">
+          <span class="text-xs font-600 uppercase tracking-widest text-accent mb-4 block">День винахідника</span>
+          <h2 class="font-display font-700 text-3xl md:text-5xl mb-4">Що Мирослав покаже<br />наприкінці літа</h2>
+          <p class="text-paper/50 text-base mb-12">Не тест. Не іспит. Просто: ось що я вмію.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-3 text-left max-w-2xl mx-auto reveal">
+          <div class="flex items-center gap-3 bg-paper/5 border border-paper/10 rounded-xl p-4 hover:bg-paper/10 transition-colors">
+            <span class="text-xl">🛞</span><span class="text-sm text-paper/70">Проїхати на моносайклі</span>
+          </div>
+          <div class="flex items-center gap-3 bg-paper/5 border border-paper/10 rounded-xl p-4 hover:bg-paper/10 transition-colors">
+            <span class="text-xl">💪</span><span class="text-sm text-paper/70">5 підтягувань + 15 відтискань</span>
+          </div>
+          <div class="flex items-center gap-3 bg-paper/5 border border-paper/10 rounded-xl p-4 hover:bg-paper/10 transition-colors">
+            <span class="text-xl">🤖</span><span class="text-sm text-paper/70">Показати і пояснити робота</span>
+          </div>
+          <div class="flex items-center gap-3 bg-paper/5 border border-paper/10 rounded-xl p-4 hover:bg-paper/10 transition-colors">
+            <span class="text-xl">🗺️</span><span class="text-sm text-paper/70">Розповісти про домашню мережу</span>
+          </div>
+          <div class="flex items-center gap-3 bg-paper/5 border border-paper/10 rounded-xl p-4 hover:bg-paper/10 transition-colors">
+            <span class="text-xl">🗄️</span><span class="text-sm text-paper/70">Показати файловий сервер у дії</span>
+          </div>
+          <div class="flex items-center gap-3 bg-paper/5 border border-paper/10 rounded-xl p-4 hover:bg-paper/10 transition-colors">
+            <span class="text-xl">🔒</span><span class="text-sm text-paper/70">Пояснити що таке VPN</span>
+          </div>
+          <div class="flex items-center gap-3 bg-paper/5 border border-paper/10 rounded-xl p-4 hover:bg-paper/10 transition-colors">
+            <span class="text-xl">🖨️</span><span class="text-sm text-paper/70">Тримати надруковану 3D-деталь</span>
+          </div>
+          <div class="flex items-center gap-3 bg-paper/5 border border-paper/10 rounded-xl p-4 hover:bg-paper/10 transition-colors">
+            <span class="text-xl">🌊</span><span class="text-sm text-paper/70">Показати морський щоденник</span>
+          </div>
+          <div class="sm:col-span-2 flex items-center gap-3 bg-gradient-to-r from-accent/20 to-gold/10 border border-accent/30 rounded-xl p-4 hover:bg-accent/20 transition-colors">
+            <span class="text-2xl">🎓</span>
+            <span class="text-sm text-paper/90 font-600">«Я можу взяти незнайоме завдання, розібратися і пояснити іншим» — ось що таке інженерне мислення.</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================
+       FOOTER
+       ===================================================== -->
+  <footer class="bg-paper border-t border-cream py-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🚀</span>
+          <span class="font-display font-700 text-sm">Академія юного інженера Мирослава</span>
+        </div>
+        <p class="text-xs text-ink/40 text-center">Літо 2025 · Червень — Серпень · 11 місій</p>
+        <button onclick="window.scrollTo({top:0,behavior:'smooth'})"
+                class="text-xs text-ink/50 hover:text-accent transition-colors flex items-center gap-1.5 font-medium"
+                aria-label="Повернутись нагору">
+          ↑ Нагору
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =====================================================
+       JAVASCRIPT — ВСЯ ІНТЕРАКТИВНІСТЬ
+       ===================================================== -->
+  <script>
+    /* --------------------------------------------------
+       УТИЛІТИ: localStorage з fallback
+    -------------------------------------------------- */
+    const store = {
+      get: (k, def) => { try { const v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : def; } catch { return def; } },
+      set: (k, v)   => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+    };
+
+    /* --------------------------------------------------
+       ПРОГРЕС-БАР СКРОЛУ
+    -------------------------------------------------- */
+    window.addEventListener('scroll', () => {
+      const scrolled  = document.documentElement.scrollTop;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      document.getElementById('scroll-progress').style.width = (scrolled / maxScroll * 100) + '%';
+    }, { passive: true });
+
+    /* --------------------------------------------------
+       REVEAL ON SCROLL — IntersectionObserver
+    -------------------------------------------------- */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* --------------------------------------------------
+       ACTIVE NAV LINK ON SCROLL
+    -------------------------------------------------- */
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          navLinks.forEach(a => {
+            a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(s => navObserver.observe(s));
+
+    /* --------------------------------------------------
+       MOBILE MENU TOGGLE
+    -------------------------------------------------- */
+    const menuToggle  = document.getElementById('menu-toggle');
+    const mobileMenu  = document.getElementById('mobile-menu');
+    const iconBurger  = document.getElementById('icon-hamburger');
+    const iconClose   = document.getElementById('icon-close');
+
+    menuToggle.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('hidden');
+      menuToggle.setAttribute('aria-expanded', String(!open));
+      iconBurger.classList.toggle('hidden', !open);
+      iconClose.classList.toggle('hidden', open);
+    });
+
+    // Закрити при кліку на пункт меню
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        iconBurger.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* --------------------------------------------------
+       TABS — МІСЯЦІ
+    -------------------------------------------------- */
+    function switchTab(id) {
+      // Ховаємо всі панелі
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('tab-active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      // Показуємо потрібну
+      document.getElementById('tab-' + id).classList.remove('hidden');
+      document.getElementById('btn-' + id).classList.add('tab-active');
+      document.getElementById('btn-' + id).setAttribute('aria-selected', 'true');
+    }
+
+    /* --------------------------------------------------
+       GOALS — ЧЕКБОКСИ + ПРОГРЕС
+    -------------------------------------------------- */
+    const GOAL_IDS = ['g1','g2','g3','g4','g5','g6','g7','g8','g9','g10','g11'];
+    let completedGoals = store.get('goals', {});
+
+    function updateGoalUI(id) {
+      const checkEl = document.getElementById(id + '-check');
+      const cardEl  = document.getElementById(id + '-check').closest('.goal-card');
+      const done    = completedGoals[id];
+
+      if (done) {
+        checkEl.classList.add('bg-teal', 'border-teal');
+        checkEl.classList.remove('border-paper/20');
+        checkEl.textContent = '✓';
+        cardEl.style.opacity = '0.65';
+      } else {
+        checkEl.classList.remove('bg-teal', 'border-teal');
+        checkEl.classList.add('border-paper/20');
+        checkEl.textContent = '';
+        cardEl.style.opacity = '1';
+      }
+    }
+
+    function toggleGoal(id) {
+      completedGoals[id] = !completedGoals[id];
+      store.set('goals', completedGoals);
+      updateGoalUI(id);
+      updateProgressBadge();
+    }
+
+    function updateProgressBadge() {
+      const done  = GOAL_IDS.filter(id => completedGoals[id]).length;
+      const total = GOAL_IDS.length;
+      const pct   = Math.round(done / total * 100);
+
+      document.getElementById('done-count').textContent  = done;
+      document.getElementById('total-count').textContent = total;
+      document.getElementById('goal-pct').textContent    = pct + '%';
+      document.getElementById('goal-bar').style.width    = pct + '%';
+    }
+
+    // Ініціалізація стану цілей
+    GOAL_IDS.forEach(id => updateGoalUI(id));
+    updateProgressBadge();
+
+    /* --------------------------------------------------
+       JOURNAL — ЩОДЕННИК
+    -------------------------------------------------- */
+    let currentRating = 0;
+
+    // Встановити дату за замовчуванням — сьогодні
+    document.getElementById('journal-date').valueAsDate = new Date();
+
+    function setRating(n) {
+      currentRating = n;
+      document.querySelectorAll('.star-btn').forEach((btn, i) => {
+        btn.textContent = i < n ? '★' : '☆';
+        btn.style.color = i < n ? '#c49a2e' : '';
+      });
+    }
+
+    function saveEntry() {
+      const entry = {
+        id:     Date.now(),
+        date:   document.getElementById('journal-date').value,
+        rating: currentRating,
+        done:   document.getElementById('j-done').value.trim(),
+        hard:   document.getElementById('j-hard').value.trim(),
+        win:    document.getElementById('j-win').value.trim(),
+        word:   document.getElementById('j-word').value.trim(),
+        next:   document.getElementById('j-next').value.trim(),
+      };
+
+      if (!entry.done && !entry.win && !entry.hard) {
+        alert('Заповни хоча б одне поле перед збереженням!');
+        return;
+      }
+
+      const entries = store.get('journal', []);
+      entries.unshift(entry);
+      store.set('journal', entries);
+      renderEntries();
+      clearEntry();
+    }
+
+    function clearEntry() {
+      ['j-done','j-hard','j-win','j-word','j-next'].forEach(id => {
+        const el = document.getElementById(id);
+        el.value = '';
+      });
+      document.getElementById('journal-date').valueAsDate = new Date();
+      setRating(0);
+    }
+
+    function deleteEntry(id) {
+      const entries = store.get('journal', []).filter(e => e.id !== id);
+      store.set('journal', entries);
+      renderEntries();
+    }
+
+    function renderEntries() {
+      const entries = store.get('journal', []);
+      const list    = document.getElementById('entries-list');
+      const count   = document.getElementById('entries-count');
+      count.textContent = entries.length + ' ' + (entries.length === 1 ? 'запис' : entries.length < 5 ? 'записи' : 'записів');
+
+      if (!entries.length) {
+        list.innerHTML = '<p class="text-ink/40 text-sm text-center py-8 bg-white rounded-2xl border border-cream">Тут з\'являться твої записи після першого збереження 📝</p>';
+        return;
+      }
+
+      list.innerHTML = entries.map(e => {
+        const stars  = '★'.repeat(e.rating) + '☆'.repeat(5 - e.rating);
+        const dateStr = e.date ? new Date(e.date + 'T12:00:00').toLocaleDateString('uk-UA', { day: 'numeric', month: 'long' }) : '';
+        return `
+          <article class="bg-white rounded-2xl border border-cream p-5 animate-slide-in">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <div class="flex items-center gap-3">
+                <span class="font-display font-700 text-sm">${dateStr}</span>
+                <span class="text-gold text-sm tracking-wide">${stars}</span>
+              </div>
+              <button onclick="deleteEntry(${e.id})" class="text-xs text-ink/30 hover:text-accent transition-colors" aria-label="Видалити запис">✕ видалити</button>
+            </div>
+            <div class="space-y-2.5 text-sm text-ink/70">
+              ${e.done ? `<div><span class="font-600 text-teal">🔧 Зробив:</span> ${e.done}</div>` : ''}
+              ${e.hard ? `<div><span class="font-600 text-accent">😤 Складно:</span> ${e.hard}</div>` : ''}
+              ${e.win  ? `<div><span class="font-600 text-gold">🚀 Краще:</span> ${e.win}</div>` : ''}
+              ${e.word ? `<div><span class="font-600 text-mist">📚 Слово:</span> <code class="bg-cream px-1.5 py-0.5 rounded text-xs font-mono">${e.word}</code></div>` : ''}
+              ${e.next ? `<div><span class="font-600 text-mist">🔭 Завтра:</span> ${e.next}</div>` : ''}
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // Відображаємо записи при завантаженні
+    renderEntries();
+
+    /* --------------------------------------------------
+       KEYBOARD NAVIGATION — Escape закриває меню
+    -------------------------------------------------- */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+        iconBurger.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  </script>
+
+</body>
+</html>

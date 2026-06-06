@@ -1,0 +1,2734 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fortnite-світ Мирослава — Інтерактивна тактична платформа</title>
+  <style>
+    /* ==========================================
+       DESIGN SYSTEM & CSS VARIABLES
+       ========================================== */
+    :root {
+      /* Day Ops Theme - Clean, high-contrast, premium light interface */
+      --bg-primary: #f1f5f9;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #e2e8f0;
+      --border-color: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --accent-purple: #7c3aed;
+      --accent-teal: #0d9488;
+      --accent-yellow: #d97706;
+      --accent-success: #059669;
+      --accent-danger: #dc2626;
+      --card-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.08), 0 8px 16px -6px rgba(0, 0, 0, 0.04);
+      --hud-glow: 0 0 15px rgba(13, 148, 136, 0.1);
+      --transition-speed: 0.3s;
+      --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      /* Night Ops Theme - Tactical dark cockpit, subtle CRT glow */
+      --bg-primary: #070913;
+      --bg-secondary: #0d1127;
+      --bg-tertiary: #161b33;
+      --border-color: #1e294b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-purple: #a78bfa;
+      --accent-teal: #22d3ee;
+      --accent-yellow: #f59e0b;
+      --accent-success: #34d399;
+      --accent-danger: #f87171;
+      --card-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(34, 211, 238, 0.05);
+      --hud-glow: 0 0 25px rgba(34, 211, 238, 0.2);
+    }
+
+    /* Base Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.6;
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-purple);
+    }
+
+    /* Container Utility */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ==========================================
+       TACTICAL HEADER & HUD CONTROL
+       ========================================== */
+    header {
+      background-color: var(--bg-secondary);
+      border-bottom: 2px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--card-shadow);
+      transition: background-color var(--transition-speed), border-color var(--transition-speed);
+    }
+
+    .header-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-teal));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 1px;
+      box-shadow: var(--hud-glow);
+    }
+
+    .brand-text h1 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-home {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-main);
+      background-color: var(--bg-tertiary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      transition: border-color var(--transition-speed), color var(--transition-speed);
+    }
+
+    .back-home:hover {
+      color: var(--accent-teal);
+      border-color: var(--accent-teal);
+    }
+
+    .hud-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      background-color: var(--bg-tertiary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .hud-status-indicator {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-success);
+      border-radius: 50%;
+      animation: pulse-glow 1.5s infinite;
+    }
+
+    /* Theme Switcher */
+    .theme-switch {
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 30px;
+      width: 84px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: background-color var(--transition-speed);
+    }
+
+    .theme-switch-indicator {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-teal));
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] .theme-switch-indicator {
+      transform: translateX(46px);
+    }
+
+    .theme-icon {
+      font-size: 14px;
+      z-index: 2;
+      width: 30px;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* ==========================================
+       HERO SECTION: TACTICAL DEPLOYMENT
+       ========================================== */
+    .hero {
+      padding: 60px 0;
+      background: radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.05) 0%, transparent 60%);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    @media (max-width: 968px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .badge-primary {
+      background: linear-gradient(90deg, rgba(124, 58, 237, 0.15), rgba(34, 211, 238, 0.15));
+      border: 1px solid var(--accent-purple);
+      color: var(--accent-purple);
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: inline-block;
+      align-self: flex-start;
+    }
+
+    [data-theme="dark"] .badge-primary {
+      color: var(--accent-teal);
+      border-color: var(--accent-teal);
+    }
+
+    .hero-title {
+      font-size: 2.8rem;
+      line-height: 1.15;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-text {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    .outcomes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .outcomes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .outcome-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-purple);
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .outcome-card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .outcome-card p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Hero Interactive HUD Graphic */
+    .hero-graphic {
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-graphic::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(34, 211, 238, 0.03) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .graphic-hud-top {
+      display: flex;
+      justify-content: space-between;
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: var(--accent-teal);
+    }
+
+    .graphic-aim-reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+      opacity: 0.5;
+    }
+
+    .graphic-stats {
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+
+    .graphic-stats-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .graphic-stats-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .graphic-label {
+      color: var(--text-muted);
+    }
+
+    .graphic-value {
+      font-weight: 700;
+      color: var(--accent-teal);
+    }
+
+    /* ==========================================
+       CORE CONCEPT SECTION: FORTNITE UNIVERSE
+       ========================================== */
+    .section-title-wrapper {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-subtitle {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent-purple);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+    }
+
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 968px) {
+      .modes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .modes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-card {
+      background-color: var(--bg-secondary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+      transition: transform var(--transition-speed), border-color var(--transition-speed);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mode-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-teal);
+    }
+
+    .mode-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(34, 211, 238, 0.1));
+      border: 1.5px solid var(--accent-purple);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-purple);
+    }
+
+    [data-theme="dark"] .mode-icon {
+      border-color: var(--accent-teal);
+      color: var(--accent-teal);
+    }
+
+    .mode-card h3 {
+      font-size: 1.2rem;
+      font-weight: 750;
+    }
+
+    .mode-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      flex-grow: 1;
+    }
+
+    /* Info Callout */
+    .callout-info {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.04), rgba(34, 211, 238, 0.04));
+      border: 1px solid var(--border-color);
+      border-left: 5px solid var(--accent-teal);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 60px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .callout-info-icon {
+      font-size: 24px;
+      color: var(--accent-teal);
+    }
+
+    .callout-info-text p {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    /* ==========================================
+       PARENTS CORNER & SAFETY CHEKLIST
+       ========================================== */
+    .parental-hub {
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 60px;
+    }
+
+    .parental-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+    }
+
+    @media (max-width: 968px) {
+      .parental-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .benefits-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .benefit-item {
+      display: flex;
+      gap: 16px;
+    }
+
+    .benefit-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--bg-tertiary);
+      border: 1.5px solid var(--border-color);
+      color: var(--accent-purple);
+      font-weight: 800;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .benefit-content h4 {
+      font-size: 1rem;
+      font-weight: 750;
+      margin-bottom: 4px;
+    }
+
+    .benefit-content p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* Interactive Code of Conduct */
+    .safety-code {
+      background-color: var(--bg-primary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .safety-code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .safety-code-header h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .badge-hud {
+      background-color: var(--bg-tertiary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .badge-hud.active {
+      background-color: rgba(5, 150, 105, 0.15);
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+    }
+
+    .checklist-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s;
+    }
+
+    .checklist-item:hover {
+      border-color: var(--accent-purple);
+    }
+
+    .checklist-checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-color);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .checklist-item.checked .checklist-checkbox {
+      background-color: var(--accent-success);
+      border-color: var(--accent-success);
+    }
+
+    .checklist-checkbox svg {
+      width: 12px;
+      height: 12px;
+      fill: none;
+      stroke: white;
+      stroke-width: 3px;
+      display: none;
+    }
+
+    .checklist-item.checked .checklist-checkbox svg {
+      display: block;
+    }
+
+    .checklist-text {
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    .checklist-item.checked .checklist-text {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    /* ==========================================
+       KEYBOARD CONTROLS DECK
+       ========================================== */
+    .controls-deck {
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 60px;
+    }
+
+    .deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .deck-search {
+      position: relative;
+      width: 300px;
+    }
+
+    @media (max-width: 640px) {
+      .deck-search {
+        width: 100%;
+      }
+    }
+
+    .deck-search input {
+      width: 100%;
+      background-color: var(--bg-primary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 16px;
+      padding-left: 40px;
+      color: var(--text-main);
+      font-weight: 500;
+      outline: none;
+      transition: border-color var(--transition-speed);
+    }
+
+    .deck-search input:focus {
+      border-color: var(--accent-purple);
+    }
+
+    .deck-search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Tab Controls */
+    .controls-tabs {
+      display: flex;
+      gap: 10px;
+      border-bottom: 1.5px solid var(--border-color);
+      padding-bottom: 12px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+    }
+
+    .control-tab-btn {
+      background-color: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .control-tab-btn:hover {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+    }
+
+    .control-tab-btn.active {
+      background-color: var(--accent-purple);
+      color: white;
+    }
+
+    /* Keybind Grid */
+    .keys-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 968px) {
+      .keys-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .keys-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .key-card {
+      background-color: var(--bg-primary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .key-card:hover {
+      border-color: var(--accent-teal);
+    }
+
+    .key-action {
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .key-cap {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-bottom: 3px solid var(--border-color);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-weight: 800;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--accent-purple);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    [data-theme="dark"] .key-cap {
+      color: var(--accent-teal);
+    }
+
+    /* Traps Activation Explainer Card */
+    .traps-card {
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.05), rgba(124, 58, 237, 0.05));
+      border: 1.5px solid var(--accent-yellow);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 24px;
+      display: flex;
+      gap: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .traps-card {
+        flex-direction: column;
+      }
+    }
+
+    .traps-icon {
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .traps-content h4 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent-yellow);
+      margin-bottom: 6px;
+    }
+
+    .traps-content p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================
+       SECRETS CARDS GRID
+       ========================================== */
+    .secrets-section {
+      margin-bottom: 60px;
+    }
+
+    .secrets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 968px) {
+      .secrets-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .secrets-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .secret-card {
+      background-color: var(--bg-secondary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .secret-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--accent-teal);
+    }
+
+    .secret-badge {
+      align-self: flex-start;
+      background-color: var(--bg-tertiary);
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .secret-card h4 {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .secret-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================
+       PRO MINDSET ROADMAP STEPPER
+       ========================================== */
+    .roadmap {
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 60px;
+    }
+
+    .roadmap-timeline {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .roadmap-timeline {
+        flex-direction: column;
+        gap: 24px;
+      }
+      .roadmap-timeline::before {
+        display: none !important;
+      }
+    }
+
+    .roadmap-timeline::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background-color: var(--bg-tertiary);
+      z-index: 1;
+    }
+
+    .roadmap-step-btn {
+      position: relative;
+      z-index: 2;
+      background-color: var(--bg-secondary);
+      border: 3px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      transition: all 0.3s;
+    }
+
+    .roadmap-step-btn.active {
+      border-color: var(--accent-purple);
+      background-color: var(--accent-purple);
+      color: white;
+      box-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
+    }
+
+    .roadmap-step-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    @media (max-width: 768px) {
+      .roadmap-step-wrapper {
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+      }
+    }
+
+    .roadmap-step-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .roadmap-step-wrapper.active .roadmap-step-label {
+      color: var(--text-main);
+    }
+
+    .roadmap-content-panel {
+      background-color: var(--bg-primary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 30px;
+      transition: opacity var(--transition-speed);
+    }
+
+    .roadmap-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .roadmap-panel-header h3 {
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .roadmap-panel-header h3 span {
+      color: var(--accent-purple);
+    }
+
+    .roadmap-panel-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .roadmap-panel-body {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
+    .roadmap-list-title {
+      font-size: 0.95rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      color: var(--accent-teal);
+    }
+
+    .roadmap-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .roadmap-list li {
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .roadmap-list li::before {
+      content: '✓';
+      color: var(--accent-success);
+      font-weight: 800;
+    }
+
+    /* ==========================================
+       TACTICAL TRAINING TIMER MODULE
+       ========================================== */
+    .timer-section {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(34, 211, 238, 0.05));
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 60px;
+    }
+
+    .timer-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    @media (max-width: 968px) {
+      .timer-layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    .timer-hud {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 50%;
+      aspect-ratio: 1;
+      width: 280px;
+      margin: 0 auto;
+      box-shadow: var(--hud-glow);
+      position: relative;
+    }
+
+    .timer-hud-circle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 6px solid var(--border-color);
+      clip-path: polygon(50% 50%, -50% -50%, 150% -50%, 150% 150%, -50% 150%);
+    }
+
+    .timer-display {
+      font-size: 3rem;
+      font-weight: 900;
+      font-family: monospace;
+      letter-spacing: -1px;
+    }
+
+    .timer-phase-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn-timer {
+      background-color: var(--bg-tertiary);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .btn-timer:hover {
+      background-color: var(--accent-purple);
+      color: white;
+    }
+
+    .btn-timer-primary {
+      background-color: var(--accent-teal);
+      border-color: var(--accent-teal);
+      color: var(--bg-primary);
+    }
+
+    .btn-timer-primary:hover {
+      background-color: var(--accent-purple);
+      border-color: var(--accent-purple);
+      color: white;
+    }
+
+    .training-phases {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .phase-card {
+      background-color: var(--bg-secondary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .phase-card.active {
+      border-color: var(--accent-teal);
+      background-color: rgba(34, 211, 238, 0.05);
+    }
+
+    .phase-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .phase-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .phase-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .phase-time {
+      font-weight: 800;
+      font-family: monospace;
+      font-size: 0.9rem;
+      background-color: var(--bg-tertiary);
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: var(--accent-purple);
+    }
+
+    /* ==========================================
+       TACTICAL COMBOS PANEL
+       ========================================== */
+    .combos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 968px) {
+      .combos-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .combo-card {
+      background-color: var(--bg-secondary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .combo-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1.5px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .combo-icon {
+      font-size: 24px;
+    }
+
+    .combo-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .combo-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      list-style-type: none;
+    }
+
+    .combo-step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+
+    .combo-step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background-color: var(--bg-tertiary);
+      font-weight: 800;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================
+       INTERACTIVE KNOWLEDGE ASSESSMENT (QUIZ)
+       ========================================== */
+    .quiz-card {
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 60px;
+    }
+
+    .quiz-question {
+      margin-bottom: 24px;
+    }
+
+    .quiz-num {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-purple);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .quiz-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quiz-option {
+      background-color: var(--bg-primary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--accent-purple);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--accent-purple);
+      background-color: rgba(124, 58, 237, 0.05);
+    }
+
+    .quiz-option.correct {
+      border-color: var(--accent-success);
+      background-color: rgba(5, 150, 105, 0.08);
+      color: var(--accent-success);
+    }
+
+    .quiz-option.incorrect {
+      border-color: var(--accent-danger);
+      background-color: rgba(220, 38, 38, 0.08);
+      color: var(--accent-danger);
+    }
+
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+      border-top: 1.5px solid var(--border-color);
+      padding-top: 20px;
+    }
+
+    .quiz-score-hud {
+      font-family: monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .quiz-score-val {
+      color: var(--accent-teal);
+    }
+
+    .btn-quiz-next {
+      background-color: var(--accent-purple);
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-quiz-next:hover {
+      background-color: var(--accent-teal);
+    }
+
+    /* Common Mistakes Table */
+    .mistakes-card {
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 60px;
+    }
+
+    .mistakes-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .mistakes-table, .mistakes-table tbody, .mistakes-table tr, .mistakes-table td {
+        display: block;
+        width: 100%;
+      }
+      .mistakes-table tr {
+        margin-bottom: 16px;
+        border-bottom: 1.5px solid var(--border-color);
+        padding-bottom: 16px;
+      }
+      .mistakes-table td {
+        padding: 8px 0;
+      }
+    }
+
+    .mistakes-table th {
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border-color);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .mistakes-table td {
+      padding: 16px;
+      border-bottom: 1.5px solid var(--border-color);
+      vertical-align: top;
+      font-size: 0.92rem;
+    }
+
+    .badge-mistake-bad {
+      background-color: rgba(220, 38, 38, 0.1);
+      color: var(--accent-danger);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .badge-mistake-good {
+      background-color: rgba(5, 150, 105, 0.1);
+      color: var(--accent-success);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    /* ==========================================
+       SPEAKING & DRILL SECTION
+       ========================================== */
+    .drill-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 768px) {
+      .drill-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .drill-card {
+      background-color: var(--bg-secondary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .drill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drill-label {
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--accent-teal);
+      text-transform: uppercase;
+    }
+
+    .drill-card h4 {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .drill-answer {
+      background-color: var(--bg-primary);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: none;
+    }
+
+    .drill-answer.visible {
+      display: block;
+    }
+
+    .btn-drill-toggle {
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 700;
+      align-self: flex-start;
+      transition: all 0.2s;
+    }
+
+    .btn-drill-toggle:hover {
+      background-color: var(--accent-purple);
+      color: white;
+    }
+
+    /* ==========================================
+       FINAL REVISION SECTION & FOOTER
+       ========================================== */
+    .revision-block {
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 60px;
+      text-align: center;
+      position: relative;
+    }
+
+    .revision-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .revision-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .revision-item {
+      background-color: var(--bg-primary);
+      border-radius: 10px;
+      padding: 20px;
+      border: 1.5px solid var(--border-color);
+    }
+
+    .revision-item h5 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .revision-item p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .revision-quote {
+      font-size: 1.6rem;
+      font-weight: 800;
+      font-style: italic;
+      margin-top: 30px;
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    footer {
+      background-color: var(--bg-secondary);
+      border-top: 2px solid var(--border-color);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .footer-links a {
+      color: var(--accent-purple);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes pulse-glow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 8px rgba(5, 150, 105, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(5, 150, 105, 0);
+      }
+    }
+
+    .spacer-section {
+      height: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       HEADER & TACTICAL CONTROL BAR
+       ========================================== -->
+  <header>
+    <div class="container header-hud">
+      <div class="brand">
+        <div class="brand-logo">M</div>
+        <div class="brand-text">
+          <h1>Fortnite-світ Мирослава</h1>
+          <p>Тактичний командний центр • 2026</p>
+        </div>
+      </div>
+      <div class="nav-controls">
+        <a href="index.html" class="back-home" title="Повернутися на головну">← На головну</a>
+        <div class="hud-status">
+          <span class="hud-status-indicator"></span>
+          <span>ONLINE</span>
+        </div>
+        <div class="theme-switch" id="themeToggler" onclick="toggleTheme()" title="Змінити тактичний режим">
+          <span class="theme-icon">☀️</span>
+          <span class="theme-icon">🌙</span>
+          <span class="theme-switch-indicator"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       HERO / Tactical Deployment
+       ========================================== -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <span class="badge-primary">Базове розгортання</span>
+        <h2 class="hero-title">Привіт! Я Мирослав, і це мій <span>Fortnite-сайт</span></h2>
+        <p class="hero-text">Fortnite — це не просто “стрілялка”. Це величезний світ, де можна будувати, літати, тренувати реакцію, грати з друзями та створювати унікальні карти. Навчіться думати та діяти як pro player разом зі мною!</p>
+        
+        <div class="outcomes-grid">
+          <div class="outcome-card">
+            <h4>Критичне мислення</h4>
+            <p>Де приземлитися, коли захищатися та куди відійти</p>
+          </div>
+          <div class="outcome-card">
+            <h4>Швидка реакція</h4>
+            <p>Тренуйте координацію рук та очей на ПК</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-graphic">
+        <div class="graphic-hud-top">
+          <span>ALTITUDE: 154m</span>
+          <span>COMPASS: 310° NW</span>
+        </div>
+        <svg class="graphic-aim-reticle" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" stroke="var(--accent-teal)" stroke-width="2" fill="none" />
+          <line x1="10" y1="50" x2="35" y2="50" stroke="var(--accent-teal)" stroke-width="2" />
+          <line x1="65" y1="50" x2="90" y2="50" stroke="var(--accent-teal)" stroke-width="2" />
+          <line x1="50" y1="10" x2="50" y2="35" stroke="var(--accent-teal)" stroke-width="2" />
+          <line x1="50" y1="65" x2="50" y2="90" stroke="var(--accent-teal)" stroke-width="2" />
+          <circle cx="50" cy="50" r="3" fill="var(--accent-purple)" />
+        </svg>
+        <div class="graphic-stats">
+          <div class="graphic-stats-row">
+            <span class="graphic-label">Режим:</span>
+            <span class="graphic-value">BATTLE ROYALE</span>
+          </div>
+          <div class="graphic-stats-row">
+            <span class="graphic-label">Гравців:</span>
+            <span class="graphic-value">100 / 100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="spacer-section"></div>
+
+  <!-- ==========================================
+       CORE CONCEPT SECTION: GAME MODES
+       ========================================== */ -->
+  <section class="container">
+    <div class="section-title-wrapper">
+      <span class="section-subtitle">Огляд всесвіту</span>
+      <h2 class="section-title">Основні ігрові режими</h2>
+    </div>
+
+    <div class="modes-grid">
+      <!-- Mode 1 -->
+      <div class="mode-card">
+        <div class="mode-icon">⚔️</div>
+        <h3>Battle Royale</h3>
+        <p>100 гравців десантуються на острів. Лише один переможець забере омріяну Корону Переможця.</p>
+      </div>
+      <!-- Mode 2 -->
+      <div class="mode-card">
+        <div class="mode-icon">🛡️</div>
+        <h3>Zero Build</h3>
+        <p>Для тих, хто віддає перевагу класичній перестрілці: тільки точність, паркур, укриття та тактика.</p>
+      </div>
+      <!-- Mode 3 -->
+      <div class="mode-card">
+        <div class="mode-icon">🛠️</div>
+        <h3>Creative & UEFN</h3>
+        <p>Безмежні можливості для тренувань, міні-ігор та будівництва власних унікальних островів.</p>
+      </div>
+      <!-- Mode 4 -->
+      <div class="mode-card">
+        <div class="mode-icon">🧱</div>
+        <h3>LEGO Fortnite</h3>
+        <p>Кооперативна пригода з виживанням, конструюванням баз, видобутком ресурсів та LEGO-стилістикою.</p>
+      </div>
+      <!-- Mode 5 -->
+      <div class="mode-card">
+        <div class="mode-icon">🎵</div>
+        <h3>Festival</h3>
+        <p>Музичний ритм-режим, де ви граєте з улюбленими треками разом з друзями на віртуальній сцені.</p>
+      </div>
+      <!-- Mode 6 -->
+      <div class="mode-card">
+        <div class="mode-icon">🧟</div>
+        <h3>Save the World</h3>
+        <p>Спільна сюжетна кампанія, де ви рятуєте світ і будуєте оборонні форти від зомбі-монстрів.</p>
+      </div>
+    </div>
+
+    <div class="callout-info">
+      <span class="callout-info-icon">💡</span>
+      <div class="callout-info-text">
+        <p>У Fortnite важливо не тільки швидко тиснути на кнопки, а думати головою: розраховувати ресурси, аналізувати мапу, координувати пересування і вчасно допомагати напарникам по скваду.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       PARENTS CORNER & INTERACTIVE CODE OF CONDUCT
+       ========================================== -->
+  <section class="container">
+    <div class="parental-hub">
+      <div class="parental-grid">
+        <div class="benefits-wrapper">
+          <span class="badge-primary">Спеціально для батьків</span>
+          <h2>Чому Fortnite вартий уваги?</h2>
+          <p class="hero-text" style="font-size: 1rem;">Шановні батьки! Fortnite — це чудова сімейна платформа. Подивіться, які важливі навички розвиває гра:</p>
+          
+          <div class="benefit-item">
+            <div class="benefit-num">1</div>
+            <div class="benefit-content">
+              <h4>Командна взаємодія</h4>
+              <p>У режимі Squads неможливо виграти самотужки. Гравці вчаться розподіляти ролі, прикривати та ділитися ресурсами.</p>
+            </div>
+          </div>
+
+          <div class="benefit-item">
+            <div class="benefit-num">2</div>
+            <div class="benefit-content">
+              <h4>Миттєве прийняття рішень</h4>
+              <p>Коли шторм за спиною, а ворог попереду, мозок аналізує ситуацію за мілісекунди: лікуватися, атакувати чи будувати бокс.</p>
+            </div>
+          </div>
+
+          <div class="benefit-item">
+            <div class="benefit-num">3</div>
+            <div class="benefit-content">
+              <h4>Технічна англійська</h4>
+              <p>Базовий словниковий запас зростає миттєво завдяки термінам: <i>edit, shield, storm, revive, reload, squad.</i></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="safety-code">
+          <div class="safety-code-header">
+            <h3>🛡️ Кодекс Мирослава</h3>
+            <span class="badge-hud" id="conductStatus">НЕ ПІДТВЕРДЖЕНО</span>
+          </div>
+          <p class="hero-text" style="font-size: 0.85rem; margin-bottom: 10px;">Активуйте всі пункти кодексу безпечної гри, щоб отримати статус Pro-гравця:</p>
+          
+          <div class="checklist-container">
+            <div class="checklist-item" onclick="toggleChecklist(this)">
+              <div class="checklist-checkbox">
+                <svg viewBox="0 0 24 24"><path d="M21 7L9 19L3.5 13.5L4.91 12.09L9 16.17L19.59 5.59L21 7Z"/></svg>
+              </div>
+              <span class="checklist-text">Ніяких V-Bucks без дозволу батьків</span>
+            </div>
+
+            <div class="checklist-item" onclick="toggleChecklist(this)">
+              <div class="checklist-checkbox">
+                <svg viewBox="0 0 24 24"><path d="M21 7L9 19L3.5 13.5L4.91 12.09L9 16.17L19.59 5.59L21 7Z"/></svg>
+              </div>
+              <span class="checklist-text">Ніколи не пишу незнайомцям особисту інформацію</span>
+            </div>
+
+            <div class="checklist-item" onclick="toggleChecklist(this)">
+              <div class="checklist-checkbox">
+                <svg viewBox="0 0 24 24"><path d="M21 7L9 19L3.5 13.5L4.91 12.09L9 16.17L19.59 5.59L21 7Z"/></svg>
+              </div>
+              <span class="checklist-text">Поводжуся спокійно, не кричу в мікрофон</span>
+            </div>
+
+            <div class="checklist-item" onclick="toggleChecklist(this)">
+              <div class="checklist-checkbox">
+                <svg viewBox="0 0 24 24"><path d="M21 7L9 19L3.5 13.5L4.91 12.09L9 16.17L19.59 5.59L21 7Z"/></svg>
+              </div>
+              <span class="checklist-text">Спочатку уроки та корисні справи, потім гра</span>
+            </div>
+
+            <div class="checklist-item" onclick="toggleChecklist(this)">
+              <div class="checklist-checkbox">
+                <svg viewBox="0 0 24 24"><path d="M21 7L9 19L3.5 13.5L4.91 12.09L9 16.17L19.59 5.59L21 7Z"/></svg>
+              </div>
+              <span class="checklist-text">Роблю регулярні перерви, щоб вберегти очі</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       KEYBOARD CONTROLS DECK
+       ========================================== -->
+  <section class="container">
+    <div class="controls-deck">
+      <div class="deck-header">
+        <div>
+          <span class="section-subtitle">Консоль Керування</span>
+          <h2 class="section-title">Клавіші Fortnite (Windows)</h2>
+        </div>
+        <div class="deck-search">
+          <svg class="deck-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="controlsSearch" placeholder="Пошук дії (наприклад, Стіна)..." oninput="filterControls()">
+        </div>
+      </div>
+
+      <div class="controls-tabs">
+        <button class="control-tab-btn active" onclick="switchControlTab('all')">Усі клавіші</button>
+        <button class="control-tab-btn" onclick="switchControlTab('movement')">Рух</button>
+        <button class="control-tab-btn" onclick="switchControlTab('combat')">Бій & Дії</button>
+        <button class="control-tab-btn" onclick="switchControlTab('build')">Будівництво</button>
+      </div>
+
+      <div class="keys-grid" id="keysGrid">
+        <!-- JS will populate these elements dynamically to allow for lightning-fast search filtering -->
+      </div>
+
+      <div class="traps-card">
+        <span class="traps-icon">🪤</span>
+        <div class="traps-content">
+          <h4>Як активувати traps (Пастки) у Fortnite</h4>
+          <p>Пастки можуть змінюватися залежно від сезону чи режиму. Щоб застосувати пастку: увійдіть у build mode (клавіша Q), оберіть trap slot за допомогою гарячої клавіші T, наведіть на площину (підлогу/стіну) та натисніть ліву кнопку миші. <strong>Порада Мирослава:</strong> Пастка працює найкраще там, де ворог поспішає і не дивиться під ноги.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECRETS SECTION
+       ========================================== -->
+  <section class="container secrets-section">
+    <div class="section-title-wrapper">
+      <span class="section-subtitle">Поради майстра</span>
+      <h2 class="section-title">Тактичні секрети Мирослава</h2>
+    </div>
+
+    <div class="secrets-grid">
+      <div class="secret-card">
+        <span class="secret-badge">HIGH GROUND</span>
+        <h4>Висота — це перевага</h4>
+        <p>Намагайтеся завжди займати вищі позиції. Зверху легше помітити противника, значно простіше цілитися і складніше отримати постріл у відповідь.</p>
+      </div>
+
+      <div class="secret-card">
+        <span class="secret-badge">STAY MOBILE</span>
+        <h4>Постійний рух</h4>
+        <p>Не стійте на місці. Нерухомий гравець — це найпростіша мішень для снайпера. Стрибайте, робіть ковзання, змінюйте траєкторії руху.</p>
+      </div>
+
+      <div class="secret-card">
+        <span class="secret-badge">AUDIO HUD</span>
+        <h4>Звук — ваш радар</h4>
+        <p>Користуйтеся хорошими навушниками. Звук кроків ворога, скрегіт деталей будівництва або шум скринь допоможуть вам орієнтуватися безпомилково.</p>
+      </div>
+
+      <div class="secret-card">
+        <span class="secret-badge">TACTICAL TIME</span>
+        <h4>Не стріляйте поспіхом</h4>
+        <p>Іноді краще вичекати пів секунди і дати точний постріл, аніж випустити всю обойму в молоко. Використовуйте кожну кулю з користю.</p>
+      </div>
+
+      <div class="secret-card">
+        <span class="secret-badge">STORM WATCH</span>
+        <h4>Шторм — це також ворог</h4>
+        <p>Не чекайте крайньої секунди, щоб тікати від зони. Плануйте свої ротації заздалегідь, щоб не померти від шкідливого туману.</p>
+      </div>
+
+      <div class="secret-card">
+        <span class="secret-badge">HEALING FIRST</span>
+        <h4>Виживання понад усе</h4>
+        <p>Якщо ваше здоров'я або щит на критичному рівні — спочатку побудуйте закритий бокс та вилікуйтесь. Живий боєць набагато корисніший.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       PRO MINDSET ROADMAP
+       ========================================== -->
+  <section class="container">
+    <div class="roadmap">
+      <div class="section-title-wrapper">
+        <span class="section-subtitle">Шлях до вершини</span>
+        <h2 class="section-title">Як стати Pro Player</h2>
+      </div>
+
+      <div class="roadmap-timeline">
+        <div class="roadmap-step-wrapper active" onclick="activateRoadmapStep(1)">
+          <div class="roadmap-step-btn active" id="step-btn-1">1</div>
+          <span class="roadmap-step-label">Новачок</span>
+        </div>
+        <div class="roadmap-step-wrapper" onclick="activateRoadmapStep(2)">
+          <div class="roadmap-step-btn" id="step-btn-2">2</div>
+          <span class="roadmap-step-label">Розумний</span>
+        </div>
+        <div class="roadmap-step-wrapper" onclick="activateRoadmapStep(3)">
+          <div class="roadmap-step-btn" id="step-btn-3">3</div>
+          <span class="roadmap-step-label">Боєць</span>
+        </div>
+        <div class="roadmap-step-wrapper" onclick="activateRoadmapStep(4)">
+          <div class="roadmap-step-btn" id="step-btn-4">4</div>
+          <span class="roadmap-step-label">Будівельник</span>
+        </div>
+        <div class="roadmap-step-wrapper" onclick="activateRoadmapStep(5)">
+          <div class="roadmap-step-btn" id="step-btn-5">5</div>
+          <span class="roadmap-step-label">Pro Mindset</span>
+        </div>
+      </div>
+
+      <div class="roadmap-content-panel" id="roadmapPanel">
+        <!-- Content dynamically injected via JS depending on step selected -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       INTEACTIVE TRAINING TIMER
+       ========================================== -->
+  <section class="container">
+    <div class="timer-section">
+      <div class="timer-layout">
+        <div class="timer-hud-container">
+          <div class="timer-hud">
+            <div class="timer-hud-circle" id="timerCircle"></div>
+            <span class="timer-phase-title" id="hudPhaseName">ТРЕНУВАННЯ</span>
+            <span class="timer-display" id="hudTimeDisplay">05:00</span>
+            <div class="timer-controls">
+              <button class="btn-timer btn-timer-primary" id="btnTimerStart" onclick="toggleTimer()">СТАРТ</button>
+              <button class="btn-timer" onclick="resetTimer()">СКИД</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span class="badge-primary">Тактичний тренажер</span>
+          <h2 style="font-size: 1.8rem; margin: 12px 0;">Щоденний 20-хвилинний воркаут</h2>
+          <p class="hero-text" style="font-size: 0.9rem; margin-bottom: 24px;">Мирослав рекомендує тренуватися регулярно за наступною схемою. Запустіть таймер, щоб відстежувати свій прогрес в режимі реального часу!</p>
+          
+          <div class="training-phases">
+            <div class="phase-card active" id="phase-0" onclick="setTimerPhase(0)">
+              <div class="phase-left">
+                <span class="phase-name">1. Тренування Aim (прицілювання)</span>
+                <span class="phase-desc">Стріляйте по мішенях на Creative aim картах</span>
+              </div>
+              <span class="phase-time">5 хв</span>
+            </div>
+
+            <div class="phase-card" id="phase-1" onclick="setTimerPhase(1)">
+              <div class="phase-left">
+                <span class="phase-name">2. Розминка Movement (пересування)</span>
+                <span class="phase-desc">Біг, стрибки, швидкі ковзання, зміна позицій</span>
+              </div>
+              <span class="phase-time">5 хв</span>
+            </div>
+
+            <div class="phase-card" id="phase-2" onclick="setTimerPhase(2)">
+              <div class="phase-left">
+                <span class="phase-name">3. Building & Editing (будівництво)</span>
+                <span class="phase-desc">Стіни, сходи, підлога, відпрацювання edit/reset</span>
+              </div>
+              <span class="phase-time">5 хв</span>
+            </div>
+
+            <div class="phase-card" id="phase-3" onclick="setTimerPhase(3)">
+              <div class="phase-left">
+                <span class="phase-name">4. Реальний матч у пабліку</span>
+                <span class="phase-desc">Протримайтеся максимально довго в Battle Royale</span>
+              </div>
+              <span class="phase-time">5 хв</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       TACTICAL COMBINATIONS
+       ========================================== -->
+  <section class="container">
+    <div class="section-title-wrapper">
+      <span class="section-subtitle">Секретні патерни</span>
+      <h2 class="section-title">Фірмові комбінації дій</h2>
+    </div>
+
+    <div class="combos-grid">
+      <!-- Combo 1 -->
+      <div class="combo-card">
+        <div class="combo-header">
+          <span class="combo-icon">👁️</span>
+          <span class="combo-title">Побачив ворога</span>
+        </div>
+        <ul class="combo-steps">
+          <li class="combo-step-item"><span class="combo-step-num">1</span><span>Миттєво знайдіть укриття</span></li>
+          <li class="combo-step-item"><span class="combo-step-num">2</span><span>Перевірте рівень HP та Shield</span></li>
+          <li class="combo-step-item"><span class="combo-step-num">3</span><span>Спробуйте зайняти панівну висоту</span></li>
+          <li class="combo-step-item"><span class="combo-step-num">4</span><span>Стріляйте лише за наявності чіткої цілі</span></li>
+        </ul>
+      </div>
+
+      <!-- Combo 2 -->
+      <div class="combo-card">
+        <div class="combo-header">
+          <span class="combo-icon">💥</span>
+          <span class="combo-title">На тебе напали</span>
+        </div>
+        <ul class="combo-steps">
+          <li class="combo-step-item"><span class="combo-step-num">1</span><span>Зберігайте повний спокій (без паніки)</span></li>
+          <li class="combo-step-item"><span class="combo-step-num">2</span><span>Побудуйте захисну стіну (Wall)</span></li>
+          <li class="combo-step-item"><span class="combo-step-num">3</span><span>Перезарядіть активну зброю (R)</span></li>
+          <li class="combo-step-item"><span class="combo-step-num">4</span><span>Відновіть захисний щит і дайте відсіч</span></li>
+        </ul>
+      </div>
+
+      <!-- Combo 3 -->
+      <div class="combo-card">
+        <div class="combo-header">
+          <span class="combo-icon">🌀</span>
+          <span class="combo-title">Шторм близько</span>
+        </div>
+        <ul class="combo-steps">
+          <li class="combo-step-item"><span class="combo-step-num">1</span><span>Миттєво відкрийте мапу (клавіша M)</span></li>
+          <li class="combo-step-item"><span class="combo-step-num">2</span><span>Складіть найкоротший безпечний маршрут</span></li>
+          <li class="combo-step-item"><span class="combo-step-num">3</span><span>Уникайте непотрібних сутичок з іншими</span></li>
+          <li class="combo-step-item"><span class="combo-step-num">4</span><span>Використовуйте предмети мобільності</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       INTERACTIVE QUIZ
+       ========================================== -->
+  <section class="container">
+    <div class="quiz-card">
+      <div class="quiz-question" id="quizContainer">
+        <!-- Quiz will be dynamically loaded here by JS -->
+      </div>
+      <div class="quiz-footer">
+        <div class="quiz-score-hud">Бал: <span class="quiz-score-val" id="quizScoreDisplay">0</span> / 4</div>
+        <button class="btn-quiz-next" id="btnQuizNext" onclick="nextQuizQuestion()" style="display: none;">Наступне питання</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       COMMON MISTAKES SECTION
+       ========================================== -->
+  <section class="container">
+    <div class="mistakes-card">
+      <span class="section-subtitle">Оптимізація гри</span>
+      <h2 class="section-title">Типові помилки новачків</h2>
+      
+      <table class="mistakes-table">
+        <thead>
+          <tr>
+            <th>Як робить новачок</th>
+            <th>Як робить Pro Player</th>
+            <th>Чому це важливо</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="badge-mistake-bad">Помилка</span>
+              <p>Стоїть нерухомо під час стрільби на відкритому місці.</p>
+            </td>
+            <td>
+              <span class="badge-mistake-good">Правильно</span>
+              <p>Постійно рухається, присідає, будує бокси або ховається.</p>
+            </td>
+            <td>По нерухомій мішені надзвичайно легко влучити з будь-якої дистанції, особливо снайперам.</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="badge-mistake-bad">Помилка</span>
+              <p>Бере зброю без розбору і намагається стріляти на велику дистанцію з дробовика.</p>
+            </td>
+            <td>
+              <span class="badge-mistake-good">Правильно</span>
+              <p>Дробовик (Shotgun) — для близьких боїв; гвинтівка — для середніх відстаней.</p>
+            </td>
+            <td>Кожен тип зброї у Fortnite має свою унікальну дистанцію ефективного ураження.</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="badge-mistake-bad">Помилка</span>
+              <p>Ігнорує навушники та грає без звуку або під гучну музику.</p>
+            </td>
+            <td>
+              <span class="badge-mistake-good">Правильно</span>
+              <p>Завжди грає в якісних навушниках з акцентом на просторове аудіо.</p>
+            </td>
+            <td>Звукові ефекти дають 70% інформації про місцезнаходження скринь та супротивників.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SPEAKING & DRILLS SECTION
+       ========================================== -->
+  <section class="container">
+    <div class="section-title-wrapper">
+      <span class="section-subtitle">Сімейний діалог</span>
+      <h2 class="section-title">Сімейні тренувальні вправи</h2>
+    </div>
+
+    <div class="drill-grid">
+      <!-- Drill 1 -->
+      <div class="drill-card">
+        <div class="drill-header">
+          <span class="drill-label">Вправа 1: Командна робота</span>
+        </div>
+        <h4>Про що домовитися з напарником перед висадкою?</h4>
+        <p class="hero-text" style="font-size: 0.9rem;">Проговоріть уголос з батьками або дитиною, яка ваша спільна тактика на матч.</p>
+        <div class="drill-answer" id="drillAns1">
+          <strong>Зразок відповіді:</strong> «Ми приземляємося в одному спокійному місці, ділимося зброєю, тримаємося поруч на відстані видимості та обов'язково попереджаємо, якщо бачимо ворогів або шторм.»
+        </div>
+        <button class="btn-drill-toggle" onclick="toggleDrillAnswer(1)">Показати зразок</button>
+      </div>
+
+      <!-- Drill 2 -->
+      <div class="drill-card">
+        <div class="drill-header">
+          <span class="drill-label">Вправа 2: Терміни</span>
+        </div>
+        <h4>Швидкий переклад англійських команд</h4>
+        <p class="hero-text" style="font-size: 0.9rem;">Прочитайте терміни та швидко перекладіть їх українською мовою.</p>
+        <div class="drill-answer" id="drillAns2">
+          <strong>Зразок відповіді:</strong> Build — будівництво, Edit — редагування, Shield — щит, Storm — шторм/буря, Revive — оживити напарника, Reload — перезаряджання, Squad — команда з 4 людей.
+        </div>
+        <button class="btn-drill-toggle" onclick="toggleDrillAnswer(2)">Показати зразок</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       FINAL REVISION SECTION
+       ========================================== -->
+  <section class="container">
+    <div class="revision-block">
+      <span class="badge-primary">Фінальне зведення</span>
+      <h2>Fortnite-девіз Мирослава</h2>
+      
+      <div class="revision-grid">
+        <div class="revision-item">
+          <h5>Грай розумно</h5>
+          <p>Постійно аналізуй помилки та стеж за зоною шторму.</p>
+        </div>
+        <div class="revision-item">
+          <h5>Тренуйся чесно</h5>
+          <p>Не використовуй сторонній софт і завжди поважай правила гри.</p>
+        </div>
+        <div class="revision-item">
+          <h5>Перемагай красиво</h5>
+          <p>Допомагай тіммейтам та отримуй задоволення від кожного матчу.</p>
+        </div>
+      </div>
+
+      <div class="revision-quote">«Справжній Pro Player береже очі, спину та свій розум!»</div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       FOOTER
+       ========================================== -->
+  <footer>
+    <div class="container">
+      <p>© 2026 Fortnite-світ Мирослава. Створено з повагою до чесної гри та сімейного геймінгу.</p>
+      <div class="footer-links">
+        <a href="#themeToggler" onclick="toggleTheme()">Змінити колір кабіни</a>
+        <a href="#keysGrid">Клавіші</a>
+        <a href="#roadmapPanel">Рівні гравця</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================
+       JAVASCRIPT LOGIC
+       ========================================== -->
+  <script>
+    // ------------------------------------------
+    // STATIC DATA SOURCE
+    // ------------------------------------------
+    const controlsData = [
+      { action: "Рух вперед", key: "W", category: "movement" },
+      { action: "Рух назад", key: "S", category: "movement" },
+      { action: "Рух вліво", key: "A", category: "movement" },
+      { action: "Рух вправо", key: "D", category: "movement" },
+      { action: "Стрибок", key: "Space", category: "movement" },
+      { action: "Спринт (швидкий біг)", key: "Left Shift", category: "movement" },
+      { action: "Присісти / ковзати", key: "Left Ctrl", category: "movement" },
+      { action: "Автобіг", key: "= або Num Lock", category: "movement" },
+      
+      { action: "Стріляти", key: "Ліва кнопка миші", category: "combat" },
+      { action: "Прицілитися", key: "Права кнопка миші", category: "combat" },
+      { action: "Перезарядити", key: "R", category: "combat" },
+      { action: "Використати предмет / двері", key: "E", category: "combat" },
+      { action: "Змінити зброю", key: "Колесо миші або 1-5", category: "combat" },
+      { action: "Інструмент / кирка", key: "F або 1", category: "combat" },
+      { action: "Відкрити карту", key: "M", category: "combat" },
+      { action: "Інвентар", key: "Tab або I", category: "combat" },
+      
+      { action: "Побудувати стіну", key: "Z або Mouse Button 4", category: "build" },
+      { action: "Побудувати підлогу", key: "X або Mouse Button 5", category: "build" },
+      { action: "Побудувати сходи", key: "C", category: "build" },
+      { action: "Дах / конус (Cone)", key: "V", category: "build" },
+      { action: "Редагувати будівлю (Edit)", key: "G або F", category: "build" },
+      { action: "Підтвердити edit", key: "Ліва кнопка миші", category: "build" },
+      { action: "Скинути edit (Reset)", key: "Scroll Down (колесо вниз)", category: "build" },
+      { action: "Повернути деталь будівлі", key: "R", category: "build" },
+      { action: "Змінити матеріал будівництва", key: "Права кнопка миші", category: "build" }
+    ];
+
+    const roadmapData = {
+      1: {
+        title: "Новачок",
+        mission: "Навчитися вільно орієнтуватися на місцевості та виживати.",
+        tips: ["Опанувати базовий рух WASD", "Тренувати стрибки та ковзання", "Швидко змінювати активну зброю", "Завжди стежити за штормом"],
+        goal: "Прожити довше, ніж половина гравців у матчі."
+      },
+      2: {
+        title: "Розумний гравець",
+        mission: "Прораховувати свої тактичні дії перед початком бою.",
+        tips: ["Вибирати безпечні місця для першої посадки", "Аналізувати коли краще атакувати, а коли — відійти", "Уникати хаотичних переміщень під штормом", "Займати висоту перед стрільбою"],
+        goal: "Стабільно потрапляти в Top 25 гравців матчу."
+      },
+      3: {
+        title: "Боєць",
+        mission: "Впевнено почуватися у ближніх та далеких дуелях.",
+        tips: ["Регулярно тренувати прицілювання (aim)", "Швидко перезаряджати зброю в укритті", "Використовувати природний рельєф як захист", "Правильно комбінувати автомати та дробовики"],
+        goal: "Зробити від 2 до 3 усунень (eliminations) за матч."
+      },
+      4: {
+        title: "Будівельник",
+        mission: "Зрозуміти та опанувати механіку швидкої побудови укриттів.",
+        tips: ["Будувати базовий куб (box) за секунди", "Швидко редагувати вікна та двері для пострілу", "Повертати та змінювати матеріали будівництва", "Опанувати швидке скидання редагування (reset)"],
+        goal: "Створити повноцінний захисний бокс за 3 секунди."
+      },
+      5: {
+        title: "Pro mindset",
+        mission: "Вміння критично аналізувати власну гру та помилки.",
+        tips: ["Аналізувати причину кожної своєї поразки", "Грати з повагою до команди та супротивників", "Зберігати спокій у критичних ситуаціях", "Регулярно робити паузи для відпочинку очей"],
+        goal: "Стати збалансованим, дисциплінованим та розумним гравцем."
+      }
+    };
+
+    const quizData = [
+      {
+        question: "Яка клавіша за замовчуванням відповідає за побудову стіни (Wall) у Fortnite на ПК?",
+        options: ["Z або Mouse Button 4", "X або Mouse Button 5", "C", "V"],
+        correct: 0
+      },
+      {
+        question: "Чому зайняття висоти (High Ground) вважається тактичною перевагою?",
+        options: [
+          "Це автоматично дає вам більше щитів.",
+          "З висоти легше бачити ворогів, легше стріляти та краще контролювати бій.",
+          "На висоті не діє шторм.",
+          "Висота збільшує швидкість вашого бігу."
+        ],
+        correct: 1
+      },
+      {
+        question: "Що Мирослав радить робити насамперед, якщо у вас залишилося мало очок здоров'я (HP) під час бою?",
+        options: [
+          "Бігти вперед і стріляти до останнього патрона.",
+          "Побудувати стіну/бокс та лікуватися, перш ніж продовжувати бій.",
+          "Шукати пастку та намагатися її встановити.",
+          "Вийти з гри."
+        ],
+        correct: 1
+      },
+      {
+        question: "Яка комбінація клавіш є найпопулярнішим методом для швидкого скидання редагування (reset edit) у гравців на ПК?",
+        options: ["Колесо миші вниз (Scroll Down)", "Ліва кнопка миші", "Клавіша G", "Клавіша R"],
+        correct: 0
+      }
+    ];
+
+    // State Variables
+    let currentTheme = "dark";
+    let activeControlTab = "all";
+    let activeRoadmapStep = 1;
+    let quizCurrentIndex = 0;
+    let quizScore = 0;
+
+    // Timer State
+    let timerInterval = null;
+    let timerPhases = [300, 300, 300, 300]; // 5 minutes each in seconds
+    let activeTimerPhaseIndex = 0;
+    let currentTimerSeconds = timerPhases[0];
+    let isTimerRunning = false;
+
+    // ------------------------------------------
+    // THEME CONTROLLER
+    // ------------------------------------------
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.getAttribute("data-theme") === "dark") {
+        html.setAttribute("data-theme", "light");
+        currentTheme = "light";
+      } else {
+        html.setAttribute("data-theme", "dark");
+        currentTheme = "dark";
+      }
+    }
+
+    // ------------------------------------------
+    // KEYBOARD CONTROLS SEARCH & TABS
+    // ------------------------------------------
+    function renderControls() {
+      const grid = document.getElementById("keysGrid");
+      grid.innerHTML = "";
+      const query = document.getElementById("controlsSearch").value.toLowerCase();
+
+      const filtered = controlsData.filter(item => {
+        const matchesSearch = item.action.toLowerCase().includes(query) || item.key.toLowerCase().includes(query);
+        const matchesTab = activeControlTab === "all" || item.category === activeControlTab;
+        return matchesSearch && matchesTab;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-muted); font-weight: 700;">Жодної клавіші не знайдено за вашим запитом. Спробуйте інше слово!</div>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "key-card";
+        card.innerHTML = `
+          <span class="key-action">${item.action}</span>
+          <span class="key-cap">${item.key}</span>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function switchControlTab(tabName) {
+      activeControlTab = tabName;
+      const buttons = document.querySelectorAll(".control-tab-btn");
+      buttons.forEach(btn => btn.classList.remove("active"));
+      
+      // Highlight correct button
+      event.target.classList.add("active");
+      renderControls();
+    }
+
+    function filterControls() {
+      renderControls();
+    }
+
+    // ------------------------------------------
+    // CODE OF CONDUCT CHECKLIST
+    // ------------------------------------------
+    function toggleChecklist(element) {
+      element.classList.toggle("checked");
+      updateConductStatus();
+    }
+
+    function updateConductStatus() {
+      const items = document.querySelectorAll(".checklist-item");
+      const checkedItems = document.querySelectorAll(".checklist-item.checked");
+      const statusBadge = document.getElementById("conductStatus");
+
+      if (checkedItems.length === items.length) {
+        statusBadge.textContent = "🛡️ PRO ЗАХИСТ АКТИВНИЙ";
+        statusBadge.classList.add("active");
+      } else {
+        statusBadge.textContent = `${checkedItems.length} / ${items.length} ПІДТВЕРДЖЕНО`;
+        statusBadge.classList.remove("active");
+      }
+    }
+
+    // ------------------------------------------
+    // ROADMAP STEPPER CONTROLLER
+    // ------------------------------------------
+    function activateRoadmapStep(stepNum) {
+      activeRoadmapStep = stepNum;
+      
+      // Update UI active states for stepper buttons
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`step-btn-${i}`);
+        const wrapper = btn.parentElement;
+        if (i === stepNum) {
+          btn.classList.add("active");
+          wrapper.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+          wrapper.classList.remove("active");
+        }
+      }
+
+      renderRoadmapPanel();
+    }
+
+    function renderRoadmapPanel() {
+      const data = roadmapData[activeRoadmapStep];
+      const panel = document.getElementById("roadmapPanel");
+      
+      panel.style.opacity = 0;
+      setTimeout(() => {
+        panel.innerHTML = `
+          <div class="roadmap-panel-header">
+            <h3>Рівень ${activeRoadmapStep}: <span>${data.title}</span></h3>
+            <span class="badge-hud">МЕТА: ${data.goal}</span>
+          </div>
+          <p class="hero-text" style="font-size: 1rem; margin-bottom: 20px; font-weight: 500;">
+            <strong>Основна місія:</strong> ${data.mission}
+          </p>
+          <div class="roadmap-panel-body">
+            <div>
+              <h4 class="roadmap-list-title">Що потрібно тренувати:</h4>
+              <ul class="roadmap-list">
+                ${data.tips.map(tip => `<li>${tip}</li>`).join('')}
+              </ul>
+            </div>
+            <div style="background-color: var(--bg-secondary); border: 1.5px solid var(--border-color); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; justify-content: center;">
+              <h4 style="font-weight: 800; font-size: 0.95rem; margin-bottom: 8px; color: var(--accent-purple); text-transform: uppercase;">Порада від Мирослава:</h4>
+              <p style="font-size: 0.88rem; font-style: italic; color: var(--text-muted);">
+                «На цьому етапі найважливіше не поспішати. Fortnite вимагає стабільності та терпіння. Кожна помилка — це просто досвід для вашого наступного красивого матчу!»
+              </p>
+            </div>
+          </div>
+        `;
+        panel.style.opacity = 1;
+      }, 150);
+    }
+
+    // ------------------------------------------
+    // TACTICAL TIMER LOGIC
+    // ------------------------------------------
+    function updateTimerUI() {
+      const minutes = Math.floor(currentTimerSeconds / 60);
+      const seconds = currentTimerSeconds % 60;
+      const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      
+      document.getElementById("hudTimeDisplay").textContent = formattedTime;
+      
+      // Update circular visual bar based on elapsed time percentage
+      const totalPhaseTime = timerPhases[activeTimerPhaseIndex];
+      const elapsedPercentage = ((totalPhaseTime - currentTimerSeconds) / totalPhaseTime) * 360;
+      const timerCircle = document.getElementById("timerCircle");
+      
+      if (currentTimerSeconds === 0) {
+        timerCircle.style.clipPath = "polygon(50% 50%, -50% -50%, 150% -50%, 150% 150%, -50% 150%)";
+      } else {
+        // Simple visual representations of visual timing ring
+        timerCircle.style.borderColor = "var(--accent-teal)";
+      }
+    }
+
+    function setTimerPhase(phaseIndex) {
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        document.getElementById("btnTimerStart").textContent = "СТАРТ";
+      }
+      
+      activeTimerPhaseIndex = phaseIndex;
+      currentTimerSeconds = timerPhases[phaseIndex];
+      
+      // Update Phase cards styling
+      for (let i = 0; i < 4; i++) {
+        const card = document.getElementById(`phase-${i}`);
+        if (i === phaseIndex) {
+          card.classList.add("active");
+        } else {
+          card.classList.remove("active");
+        }
+      }
+
+      const phaseNames = ["AIM ТРЕНУВАННЯ", "MOVEMENT", "БУДІВНИЦТВО", "ОДИН МАТЧ"];
+      document.getElementById("hudPhaseName").textContent = phaseNames[phaseIndex];
+      updateTimerUI();
+    }
+
+    function toggleTimer() {
+      const startBtn = document.getElementById("btnTimerStart");
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        startBtn.textContent = "СТАРТ";
+      } else {
+        isTimerRunning = true;
+        startBtn.textContent = "ПАУЗА";
+        
+        timerInterval = setInterval(() => {
+          if (currentTimerSeconds > 0) {
+            currentTimerSeconds--;
+            updateTimerUI();
+          } else {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            startBtn.textContent = "СТАРТ";
+            
+            // Auto transition to next phase if available
+            if (activeTimerPhaseIndex < 3) {
+              setTimerPhase(activeTimerPhaseIndex + 1);
+              toggleTimer(); // auto restart next phase
+            } else {
+              // Finish session
+              alertSessionFinished();
+            }
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      isTimerRunning = false;
+      document.getElementById("btnTimerStart").textContent = "СТАРТ";
+      currentTimerSeconds = timerPhases[activeTimerPhaseIndex];
+      updateTimerUI();
+    }
+
+    function alertSessionFinished() {
+      // Custom inline visual non-blocking message alert
+      const hudDisplay = document.getElementById("hudTimeDisplay");
+      hudDisplay.textContent = "DONE!";
+      hudDisplay.style.color = "var(--accent-success)";
+      setTimeout(() => {
+        hudDisplay.style.color = "var(--text-main)";
+        setTimerPhase(0);
+      }, 5000);
+    }
+
+    // ------------------------------------------
+    // INTERACTIVE QUIZ CONTROLLER
+    // ------------------------------------------
+    function loadQuizQuestion() {
+      const current = quizData[quizCurrentIndex];
+      const container = document.getElementById("quizContainer");
+      const nextBtn = document.getElementById("btnQuizNext");
+      
+      nextBtn.style.display = "none";
+      
+      container.innerHTML = `
+        <div class="quiz-num">Питання ${quizCurrentIndex + 1} з 4</div>
+        <div class="quiz-text">${current.question}</div>
+        <div class="quiz-options">
+          ${current.options.map((option, idx) => `
+            <div class="quiz-option" id="option-${idx}" onclick="selectQuizOption(${idx})">
+              <span>${option}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function selectQuizOption(optionIdx) {
+      const current = quizData[quizCurrentIndex];
+      const nextBtn = document.getElementById("btnQuizNext");
+      
+      // Prevent double selection
+      const options = document.querySelectorAll(".quiz-option");
+      let alreadySelected = false;
+      options.forEach(opt => {
+        if (opt.classList.contains("correct") || opt.classList.contains("incorrect")) {
+          alreadySelected = true;
+        }
+      });
+      if (alreadySelected) return;
+
+      const selectedOption = document.getElementById(`option-${optionIdx}`);
+      
+      if (optionIdx === current.correct) {
+        selectedOption.classList.add("correct");
+        quizScore++;
+        document.getElementById("quizScoreDisplay").textContent = quizScore;
+      } else {
+        selectedOption.classList.add("incorrect");
+        // Show correct answer too
+        document.getElementById(`option-${current.correct}`).classList.add("correct");
+      }
+
+      nextBtn.style.display = "block";
+    }
+
+    function nextQuizQuestion() {
+      if (quizCurrentIndex < quizData.length - 1) {
+        quizCurrentIndex++;
+        loadQuizQuestion();
+      } else {
+        // Complete state
+        const container = document.getElementById("quizContainer");
+        const nextBtn = document.getElementById("btnQuizNext");
+        nextBtn.style.display = "none";
+        
+        let feedback = "Чудовий результат! Ти справжній Pro-тактик!";
+        if (quizScore < 2) {
+          feedback = "Спробуй перечитати поради Мирослава ще раз та покращити свій результат.";
+        }
+
+        container.innerHTML = `
+          <div class="quiz-num">Тест завершено!</div>
+          <div class="quiz-text">Твій фінальний результат: ${quizScore} з 4 правильних відповідей</div>
+          <p class="hero-text" style="font-size: 1rem; margin-bottom: 24px;">${feedback}</p>
+          <button class="btn-quiz-next" onclick="restartQuiz()">Пройти ще раз</button>
+        `;
+      }
+    }
+
+    function restartQuiz() {
+      quizCurrentIndex = 0;
+      quizScore = 0;
+      document.getElementById("quizScoreDisplay").textContent = "0";
+      loadQuizQuestion();
+    }
+
+    // ------------------------------------------
+    // SPEAKING PRACTICE REVEALS
+    // ------------------------------------------
+    function toggleDrillAnswer(drillId) {
+      const answer = document.getElementById(`drillAns${drillId}`);
+      const btn = event.target;
+      
+      if (answer.classList.contains("visible")) {
+        answer.classList.remove("visible");
+        btn.textContent = "Показати зразок";
+      } else {
+        answer.classList.add("visible");
+        btn.textContent = "Приховати зразок";
+      }
+    }
+
+    // ------------------------------------------
+    // PAGE INITIALIZATION
+    // ------------------------------------------
+    window.onload = function() {
+      renderControls();
+      activateRoadmapStep(1);
+      updateTimerUI();
+      loadQuizQuestion();
+    };
+  </script>
+</body>
+</html>
